@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPM - ระบบติดตามการซ่อมบำรุงและรอบรถ PM</title>
+    <!-- Google Fonts: Inter & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand brand-ptg">
+                <div class="logo-image-card">
+                    <img src="assets/ptg-logo-maintenance.png" alt="PTG Logistics Maintenance">
+                </div>
+                <div class="brand-text brand-text-compact">
+                    <h1>AutoPM</h1>
+                    <span>Fleet Maintenance Command</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-group open" id="nav-dashboard-group">
+                    <a href="#" class="nav-item nav-parent active" data-target="dashboard">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        <span>Dashboard PM</span>
+                        <span class="nav-chevron">▶</span>
+                    </a>
+                    <div class="nav-submenu">
+                        <a href="#" class="nav-item nav-subitem active" data-target="dashboard">
+                            <span class="nav-dot"></span><span>ภาพรวม Dashboard</span>
+                        </a>
+                        <a href="#" class="nav-item nav-subitem" data-target="summary">
+                            <span class="nav-dot"></span><span>สรุปผลกลุ่มรถ</span>
+                        </a>
+                        <a href="#" class="nav-item nav-subitem" data-target="fleet">
+                            <span class="nav-dot"></span><span>ติดตาม PM รายรถ</span>
+                            <span class="badge badge-danger" id="fleet-badge-warning" style="display:none;">0</span>
+                        </a>
+                        <a href="#" class="nav-item nav-subitem" data-target="calendar">
+                            <span class="nav-dot"></span><span>ปฏิทินรอบ PM</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-section-label">System</div>
+                <a href="#" class="nav-item" data-target="sync">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                    <span>ดึงข้อมูล & อัปเดต (Sync)</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div>
+                        <p class="user-name">Fleet Manager</p>
+                        <p class="user-role">Administrator</p>
+                    </div>
+                </div>
+                <div class="app-version-footer">
+                    <strong>AutoPM v4.1.6</strong>
+                    <span>PTG Logistics Maintenance</span>
+                    <small>Fleet Command Center</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="header">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="header-title-area">
+                    <h2 id="page-title">แดชบอร์ดภาพรวม</h2>
+                    <p id="page-subtitle">แสดงสถิติและสถานะรถที่ถึงกำหนดซ่อมบำรุง PM</p>
+                </div>
+                <div class="header-actions">
+                    <span class="sync-status-indicator" id="sync-status">กำลังโหลดข้อมูล...</span>
+                    <button class="btn btn-secondary btn-icon" id="btn-quick-sync" title="ดึงข้อมูลจาก Google Sheet ทันที">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                    </button>
+                    <span class="system-time" id="system-time">20/06/2026</span>
+                </div>
+            </header>
+
+            <div class="content-body">
+                
+                <!-- VIEW 1: DASHBOARD -->
+                <section id="view-dashboard" class="content-view active">
+
+                    <!-- Phase 4.1: Executive Command Center -->
+                    <div class="command-center-grid">
+                        <div class="command-hero-card">
+                            <div class="command-eyebrow">EXECUTIVE FLEET HEALTH</div>
+                            <div class="command-hero-main">
+                                <div>
+                                    <div class="health-score-label">Fleet Health Score</div>
+                                    <div class="health-score-value" id="fleet-health-score">--</div>
+                                    <div class="health-score-note" id="fleet-health-note">กำลังประเมินสุขภาพฟลีต...</div>
+                                </div>
+                                <div class="health-grade-badge" id="fleet-health-grade">--</div>
+                            </div>
+                            <div class="health-score-track"><div id="fleet-health-bar" class="health-score-fill"></div></div>
+                            <div class="hero-premium-meta">
+                                <div><span>Total Fleet</span><strong id="hero-total-vehicles">0</strong><small>คันในระบบ</small></div>
+                                <div><span>Safe Rate</span><strong id="hero-safe-rate">0%</strong><small>OK + Prepare</small></div>
+                                <div><span>Risk Load</span><strong id="hero-risk-load">0%</strong><small>Overdue + Follow Up</small></div>
+                            </div>
+                        </div>
+
+                        <div class="command-brief-card primary-kpi-zone">
+                            <div class="command-eyebrow">COMMAND BRIEF</div>
+                            <div class="brief-grid">
+                                <div class="brief-cell secondary"><span>รถทั้งหมด</span><strong id="brief-total">0</strong><em id="trend-total">Baseline</em></div>
+                                <div class="brief-cell critical"><span>Overdue / Critical</span><strong id="brief-critical">0</strong><em id="trend-critical">Baseline</em></div>
+                                <div class="brief-cell warning"><span>Follow Up / Need Action</span><strong id="brief-followup">0</strong><em id="trend-followup">Baseline</em></div>
+                                <div class="brief-cell safe"><span>Safe / OK</span><strong id="brief-safe">0</strong><em id="trend-safe">Baseline</em></div>
+                            </div>
+                        </div>
+
+                        <div class="quick-action-panel">
+                            <div class="command-eyebrow">QUICK ACTION</div>
+                            <div class="quick-action-cards">
+                                <button class="quick-card-action" data-dashboard-action="tracking"><span>📊</span><b>Tracking</b><small>ดูรถที่ต้องติดตาม</small></button>
+                                <button class="quick-card-action" data-dashboard-action="calendar"><span>📅</span><b>Calendar</b><small>แผน PM รายเดือน</small></button>
+                                <button class="quick-card-action" data-dashboard-action="copyUrgent"><span>📋</span><b>Copy Urgent</b><small>ส่งไลน์ให้ผู้รับผิดชอบ</small></button>
+                                <button class="quick-card-action" data-dashboard-action="exportCSV"><span>⬇</span><b>Export CSV</b><small>สำรองข้อมูล</small></button>
+                                <button class="quick-card-action refresh" data-dashboard-action="refresh"><span>🔄</span><b>Refresh API</b><small>ดึงข้อมูลล่าสุด</small></button>
+                            </div>
+                        </div>
+
+                        <div class="sync-monitor-card" id="sync-monitor-card">
+                            <div class="command-eyebrow">SYNC MONITOR</div>
+                            <div class="sync-monitor-main">
+                                <span class="sync-live-dot" id="sync-monitor-dot"></span>
+                                <div><strong id="sync-monitor-status">Checking...</strong><small id="sync-monitor-source">Data Source</small></div>
+                            </div>
+                            <div class="sync-monitor-grid">
+                                <div><span>Last Sync</span><strong id="sync-monitor-last">-</strong></div>
+                                <div><span>Records</span><strong id="sync-monitor-records">0</strong></div>
+                                <div><span>API Version</span><strong id="sync-monitor-version">-</strong></div>
+                                <div><span>Mode</span><strong id="sync-monitor-mode">-</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-data-state" id="dashboard-data-state" style="display:none;"></div>
+
+                    <!-- KPI Cards Grid -->
+                    <div class="stats-grid premium-kpi-grid">
+                        <div class="stat-card kpi-hover-card" data-kpi-hover="all">
+                            <div class="stat-icon bg-primary-soft text-primary">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">รถในระบบทั้งหมด</span>
+                                <h3 class="stat-value" id="stat-total-vehicles">0</h3><span class="stat-mini" id="stat-total-note">100% ของฟลีต</span>
+                            </div>
+                        </div>
+                        <div class="stat-card kpi-hover-card" data-kpi-hover="overdue">
+                            <div class="stat-icon bg-danger-soft text-danger">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">เกินระยะ PM (Overdue)</span>
+                                <h3 class="stat-value text-danger" id="stat-overdue">0</h3><span class="stat-mini" id="stat-overdue-pct">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card kpi-hover-card" data-kpi-hover="watch">
+                            <div class="stat-icon bg-warning-soft text-warning">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">ติดตามเรียกเข้า PM / เตรียม PM</span>
+                                <h3 class="stat-value text-warning" id="stat-upcoming-pm">0</h3><span class="stat-mini" id="stat-upcoming-pct">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card kpi-hover-card" data-kpi-hover="ok">
+                            <div class="stat-icon bg-success-soft text-success">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">สถานะ OK (ระยะปลอดภัย)</span>
+                                <h3 class="stat-value text-success" id="stat-ok-status">0</h3><span class="stat-mini" id="stat-ok-pct">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Layout Details -->
+                    <div class="dashboard-grid">
+                        <!-- Chart Card -->
+                        <div class="dashboard-card chart-container-card">
+                            <div class="card-header">
+                                <h4 class="card-title">สัดส่วนสถานะระยะเลขไมล์คงเหลือ</h4>
+                            </div>
+                            <div class="card-body flex-row justify-center align-center">
+                                <div class="custom-chart-wrapper">
+                                    <div class="donut-chart-container">
+                                        <div class="donut-chart" id="status-donut-chart">
+                                            <div class="donut-center">
+                                                <span class="donut-number" id="donut-total">0</span>
+                                                <span class="donut-text">คันทั้งหมด</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-legend" id="status-chart-legend">
+                                        <!-- Populated dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alerts and Urgent Items -->
+                        <div class="dashboard-card alerts-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title">การแจ้งเตือนรอบ PM เร่งด่วน (เกินระยะ & ติดตามเรียกเข้า)</h4>
+                                <span class="badge badge-danger" id="alert-count-badge">0</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert-list" id="alert-list-container">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card top-critical-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title">🚨 Top 10 Critical / รถเกินระยะหนักสุด</h4>
+                                <span class="command-mini-badge">War Room</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="top-critical-list" id="top-critical-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Business Type / Fleet Summary Chart -->
+                        <div class="dashboard-card span-2">
+                            <div class="card-header">
+                                <h4 class="card-title">อัตราส่วนและปริมาณแผน PM ตามประเภทธุรกิจ</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="business-summary-grid" id="business-summary-bars">
+                                    <!-- Populated dynamically with bars -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card span-2 vehicle-type-mix-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title">Vehicle Type Mix / สัดส่วนประเภทรถ</h4>
+                                <span class="command-mini-badge">Column AL</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="vehicle-type-mix" id="vehicle-type-mix"></div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card span-2 command-ranking-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title">Fleet Performance Ranking / ผู้รับผิดชอบ</h4>
+                                <span class="command-mini-badge">Top 5</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="responsible-ranking" id="responsible-ranking-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card span-2 command-trend-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title">PM Monthly Trend / แนวโน้มงานตามเดือน</h4>
+                                <span class="command-mini-badge">Plan Date</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="monthly-trend" id="monthly-trend-bars"></div>
+                            </div>
+                        </div>
+
+                        <div class="status-definition-card span-2">
+                            <div class="status-definition-header">
+                                <span class="info-dot">i</span>
+                                <div>
+                                    <strong>นิยามสถานะ PM จากระยะคงเหลือ (กม.)</strong>
+                                    <p>ใช้เกณฑ์เดียวกันทั้ง Dashboard, Summary, Tracking และ Calendar เพื่อให้ผู้ใช้งานตีความตรงกัน</p>
+                                </div>
+                            </div>
+                            <div class="status-definition-grid">
+                                <div class="status-definition-item danger"><span>🔴 เกินระยะ PM</span><strong>&lt; -2,000 กม.</strong><small>เกินรอบ PM มากกว่า 2,000 กม. ควรเร่งติดตามเข้าดำเนินการ</small></div>
+                                <div class="status-definition-item orange"><span>🟠 ติดตามเรียกเข้า PM</span><strong>-2,000 ถึง 2,000 กม.</strong><small>อยู่ในช่วงต้องประสานเรียกเข้าทำ PM</small></div>
+                                <div class="status-definition-item warning"><span>🟡 เตรียม PM</span><strong>2,001 ถึง 4,000 กม.</strong><small>วางแผนคิวรถ อะไหล่ และผู้รับผิดชอบล่วงหน้า</small></div>
+                                <div class="status-definition-item success"><span>🟢 OK</span><strong>&gt; 4,000 กม.</strong><small>ยังอยู่ในระยะปลอดภัยก่อนถึงรอบ PM</small></div>
+                            </div>
+                            <div class="status-definition-footnote">อ้างอิงจากสูตร: Y &lt; -2000 = เกินระยะPM, Y ≤ 2000 = ติดตามเรียกเข้า PM, Y ≤ 4000 = เตรียมPM, Y &gt; 4000 = OK</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: SUMMARY BY GROUP -->
+                <section id="view-summary" class="content-view">
+                    <div class="summary-tabs">
+                        <button class="tab-btn active" data-group-by="business">แยกประเภทธุรกิจ</button>
+                        <button class="tab-btn" data-group-by="fleet">ประจำคลังโยกฟลีต</button>
+                        <button class="tab-btn" data-group-by="model">รุ่นรถ (Vehicle Model)</button>
+                        <button class="tab-btn" data-group-by="vehicleType">ประเภทรถ</button>
+                        <button class="tab-btn" data-group-by="responsible">ผู้รับผิดชอบ</button>
+                    </div>
+
+                    <div class="dashboard-card" style="margin-top: 1.25rem;">
+                        <div class="card-header">
+                            <h4 class="card-title" id="summary-table-title">สรุปรายงานแบ่งตามประเภทธุรกิจ</h4>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="summary-data-table">
+                                <thead>
+                                    <tr>
+                                        <th id="summary-col-name">ประเภทธุรกิจ</th>
+                                        <th>จำนวนรถทั้งหมด</th>
+                                        <th title="ระยะคงเหลือต่ำกว่า -2,000 กม.">เกินระยะ PM 🔴</th>
+                                        <th title="ระยะคงเหลือ -2,000 ถึง 2,000 กม.">ติดตามเรียกเข้า PM 🟠</th>
+                                        <th title="ระยะคงเหลือ 2,001 ถึง 4,000 กม.">เตรียม PM 🟡</th>
+                                        <th title="ระยะคงเหลือมากกว่า 4,000 กม.">ปลอดภัย (OK) 🟢</th>
+                                        <th>เปอร์เซ็นต์รถปลอดภัย</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summary-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="status-definition-card compact">
+                        <div class="status-definition-header">
+                            <span class="info-dot">i</span>
+                            <div>
+                                <strong>นิยามสถานะ PM</strong>
+                                <p>ใช้ระยะคงเหลือ Column Y เป็นตัวตัดสถานะ เพื่อให้ผู้บริหารและผู้ใช้งานอ่านค่าเหมือนกัน</p>
+                            </div>
+                        </div>
+                        <div class="status-definition-grid">
+                            <div class="status-definition-item danger"><span>🔴 เกินระยะ PM</span><strong>&lt; -2,000 กม.</strong><small>ต้องเร่งติดตามเข้าทำ PM</small></div>
+                            <div class="status-definition-item orange"><span>🟠 ติดตามเรียกเข้า PM</span><strong>-2,000 ถึง 2,000 กม.</strong><small>อยู่ในช่วงเรียกเข้าทำ PM</small></div>
+                            <div class="status-definition-item warning"><span>🟡 เตรียม PM</span><strong>2,001 ถึง 4,000 กม.</strong><small>เตรียมคิวรถและอะไหล่</small></div>
+                            <div class="status-definition-item success"><span>🟢 OK</span><strong>&gt; 4,000 กม.</strong><small>ยังอยู่ในระยะปลอดภัย</small></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: FLEET PM LIST & TRACKING -->
+                <section id="view-fleet" class="content-view">
+                    <div class="action-bar flex-column align-stretch">
+                        <!-- Quick Status Tabs -->
+                        <div class="status-quick-filters">
+                            <button class="status-tab active" data-status="all">รถทั้งหมด (<span id="count-quick-all">0</span>)</button>
+                            <button class="status-tab text-danger" data-status="เกินระยะPM">เกินระยะPM (<span id="count-quick-overdue">0</span>)</button>
+                            <button class="status-tab text-warning-orange" data-status="ติดตามเรียกเข้า PM">ติดตามเรียกเข้า (<span id="count-quick-call">0</span>)</button>
+                            <button class="status-tab text-warning" data-status="เตรียมPM">เตรียมPM (<span id="count-quick-prepare">0</span>)</button>
+                            <button class="status-tab text-success" data-status="OK">OK (<span id="count-quick-ok">0</span>)</button>
+                        </div>
+
+                        <!-- Filters Row -->
+                        <div class="search-filter-group" style="margin-top: 1rem;">
+                            <div class="search-input-wrapper">
+                                <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="fleet-search-input" placeholder="ค้นหา เบอร์รถ, ทะเบียนรถ, รุ่นรถ...">
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-business">
+                                    <option value="all">ทุกธุรกิจขนส่ง</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-fleet">
+                                    <option value="all">ทุกคลังโยกฟลีต</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-model">
+                                    <option value="all">ทุกรุ่นรถ</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-vehicle-type">
+                                    <option value="all">ทุกประเภทรถ</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-model-year">
+                                    <option value="all">ทุก M/Y</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="fleet-filter-responsible">
+                                    <option value="all">ผู้รับผิดชอบทั้งหมด</option>
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <button class="calendar-reset-btn fleet-reset-btn" id="fleet-reset-filters">Reset filter</button>
+                            <div class="select-wrapper">
+                                <select id="fleet-sort-by">
+                                    <option value="id-asc">เบอร์รถ (น้อย-มาก)</option>
+                                    <option value="id-desc">เบอร์รถ (มาก-น้อย)</option>
+                                    <option value="remaining-asc">ระยะคงเหลือ (น้อย-มาก)</option>
+                                    <option value="remaining-desc">ระยะคงเหลือ (มาก-น้อย)</option>
+                                    <option value="plan-asc">วันที่ Plan (ใกล้-ไกล)</option>
+                                    <option value="plan-desc">วันที่ Plan (ไกล-ใกล้)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table" id="fleet-table">
+                            <thead>
+                                <tr>
+                                    <th>เบอร์รถ</th>
+                                    <th>ทะเบียนรถ</th>
+                                    <th>รุ่นรถ / ประเภทรถ</th>
+                                    <th>ประเภทธุรกิจ / ประจำคลัง</th>
+                                    <th class="text-right">KM ล่าสุด (วันที่)</th>
+                                    <th class="text-right">KM ครั้งถัดไป</th>
+                                    <th class="text-right">ระยะคงเหลือ (กม.)</th>
+                                    <th>ประมาณการ Plan</th>
+                                    <th>ผู้รับผิดชอบ</th>
+                                    <th>สถานะ</th>
+                                    <th class="text-center">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fleet-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Table Pagination -->
+                        <div class="table-pagination">
+                            <div class="pagination-info">
+                                แสดงผล <span id="pagination-start">0</span> ถึง <span id="pagination-end">0</span> จาก <span id="pagination-total">0</span> รายการ
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="btn btn-secondary btn-sm" id="btn-prev-page">ก่อนหน้า</button>
+                                <span id="pagination-page-nums"></span>
+                                <button class="btn btn-secondary btn-sm" id="btn-next-page">ถัดไป</button>
+                            </div>
+                        </div>
+
+                        <div class="empty-state" id="fleet-empty-state" style="display: none;">
+                            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+                            <p>ไม่พบข้อมูลรถยนต์ตรงกับเงื่อนไขที่กำหนด</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: PM CALENDAR -->
+                <section id="view-calendar" class="content-view">
+                    <div class="action-bar calendar-range-panel">
+                        <div class="range-panel-header">
+                            <div>
+                                <h4 class="card-title">ตัวกรองช่วงเวลา / สรุปจำนวนรถเข้า PM</h4>
+                                <p class="panel-subtitle">เลือกช่วงวันที่ แล้วดูจำนวนรถเข้า PM แยกตามธุรกิจขนส่งหรือคลังโยกฟลีต</p>
+                            </div>
+                            <div class="range-summary-pill" id="calendar-range-total">0 คัน</div>
+                        </div>
+                        <div class="search-filter-group calendar-range-controls">
+                            <div class="date-field-wrapper">
+                                <label>ตั้งแต่วันที่</label>
+                                <input type="date" id="calendar-date-start">
+                            </div>
+                            <div class="date-field-wrapper">
+                                <label>ถึงวันที่</label>
+                                <input type="date" id="calendar-date-end">
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="calendar-period-mode">
+                                    <option value="custom">กำหนดเอง</option>
+                                    <option value="week">Weekly</option>
+                                    <option value="month" selected>Month</option>
+                                    <option value="year">Year</option>
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="calendar-date-source">
+                                    <option value="planDate" selected>วันที่ Plan (AG)</option>
+                                    <option value="lastChangeDate">วันที่เข้าเปลี่ยนล่าสุด (AI)</option>
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="calendar-summary-group">
+                                    <option value="businessType">สรุปตามธุรกิจขนส่ง</option>
+                                    <option value="fleet">สรุปตามคลังโยกฟลีต</option>
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="calendar-filter-business">
+                                    <option value="all">ทุกธุรกิจขนส่ง</option>
+                                </select>
+                            </div>
+                            <div class="select-wrapper">
+                                <select id="calendar-filter-fleet">
+                                    <option value="all">ทุกคลังโยกฟลีต</option>
+                                </select>
+                            </div>
+                            <button class="btn-secondary calendar-reset-btn" id="calendar-reset-filters" type="button">
+                                Reset ฟิลเตอร์
+                            </button>
+                        </div>
+                        <div class="range-summary-grid" id="calendar-range-summary">
+                            <!-- Generated dynamically -->
+                        </div>
+                    </div>
+                    <div class="calendar-layout">
+                        <!-- Calendar Widget -->
+                        <div class="calendar-card">
+                            <div class="calendar-header-controls">
+                                <button class="btn-icon" id="btn-prev-month">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <h3 id="calendar-month-year">มิถุนายน 2026</h3>
+                                <button class="btn-icon" id="btn-next-month">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
+                            <div class="calendar-grid-header">
+                                <div>อา.</div>
+                                <div>จ.</div>
+                                <div>อ.</div>
+                                <div>พ.</div>
+                                <div>พฤ.</div>
+                                <div>ศ.</div>
+                                <div>ส.</div>
+                            </div>
+                            <div class="calendar-grid-days" id="calendar-days">
+                                <!-- Generated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Calendar details panel -->
+                        <div class="calendar-detail-card">
+                            <div class="card-header justify-between">
+                                <h4 class="card-title" id="calendar-detail-date">งานประจำวัน</h4>
+                                <span class="badge badge-primary" id="calendar-day-count-badge">0 คัน</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="calendar-detail-list" id="calendar-detail-list">
+                                    <p class="text-center text-muted">เลือกวันที่บนปฏิทินเพื่อแสดงรายการรอบรถเข้า PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: DATA SYNC & SETTINGS -->
+                <section id="view-sync" class="content-view">
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h4 class="card-title">เชื่อมโยงข้อมูลกับ Google Sheets</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="settings-desc">ดึงข้อมูลรอบการทำ PM ล่าสุดโดยตรงผ่าน API สาธารณะของ Google Sheets เพื่ออัพเดทตารางซ่อมบำรุงและกิโลเมตรเรียลไทม์</p>
+                                
+                                <div class="form-group" style="margin-top: 1rem;">
+                                    <label for="google-sheet-url">Google Sheet API URL / CSV Link</label>
+                                    <input type="text" id="google-sheet-url" class="form-input-full" value="https://docs.google.com/spreadsheets/d/1oemunoZgjantmm9dtwU5-6F6QeQ6pVafncEtuE3Imk8/export?format=csv&gid=0" placeholder="Apps Script Web App URL หรือ CSV export URL">
+                                    <small class="text-muted">รองรับ Apps Script Web App URL (JSON) หรือ Google Sheets CSV และควรเปิดสิทธิ์ให้เข้าถึงได้</small>
+                                </div>
+
+                                <div class="settings-actions-group" style="margin-top: 1.5rem;">
+                                    <button class="btn btn-primary" id="btn-fetch-live">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                                        <span>ดึงข้อมูลล่าสุดจาก API / Google Sheets</span>
+                                    </button>
+                                    
+                                    <button class="btn btn-secondary" id="btn-fetch-local">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <span>โหลดข้อมูลจากไฟล์สำรองเครื่อง (data.csv)</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h4 class="card-title">สำรองและส่งออกข้อมูล (Offline Backup)</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="settings-desc">คุณสามารถส่งออกข้อมูลในระบบเป็นไฟล์ Excel/CSV หรือสำรองข้อมูลเพื่อใช้ในกรณีไม่มีการเชื่อมต่อเครือข่ายอินเทอร์เน็ต</p>
+                                
+                                <div class="settings-actions-group" style="margin-top: 1.5rem;">
+                                    <button class="btn btn-secondary" id="btn-export-csv">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                        <span>ส่งออกเป็นไฟล์ Excel / CSV</span>
+                                    </button>
+
+                                    <button class="btn btn-secondary" id="btn-export-json">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                        <span>สำรองข้อมูลเป็นไฟล์ JSON (Backup JSON)</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: VEHICLE DETAIL & MAINTENANCE TASKS TIMELINE -->
+    <div class="modal-backdrop" id="vehicle-modal">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <span class="modal-badge-status" id="modal-vehicle-status">OK</span>
+                    <h3 id="modal-vehicle-title">รายละเอียดรอบรถ PM</h3>
+                    <p id="modal-vehicle-subtitle">เบอร์รถ: - | ทะเบียน: -</p>
+                </div>
+                <button class="btn-close" id="btn-close-modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Top Section: Grid details & Mileage Gauge -->
+                <div class="vehicle-detail-top-grid">
+                    <!-- Basic Info Table -->
+                    <div class="modal-sub-card">
+                        <h4 class="sub-card-title">ข้อมูลยานพาหนะ</h4>
+                        <div class="info-list-grid">
+                            <div class="info-item">
+                                <span class="info-label">เบอร์รถ:</span>
+                                <span class="info-value" id="md-vehicle-no">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ทะเบียนรถ:</span>
+                                <span class="info-value" id="md-license">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">รุ่นรถ:</span>
+                                <span class="info-value" id="md-model">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ประเภทรถ:</span>
+                                <span class="info-value" id="md-vehicle-type">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ประเภทธุรกิจ:</span>
+                                <span class="info-value" id="md-business">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ประจำคลังโยกฟลีต:</span>
+                                <span class="info-value" id="md-fleet">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ผู้รับผิดชอบดูแล:</span>
+                                <span class="info-value text-primary" id="md-responsible">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mileage Gauge Visualizer -->
+                    <div class="modal-sub-card">
+                        <h4 class="sub-card-title">สถานะเข็มไมล์และระยะคงเหลือ (PM Odometer)</h4>
+                        <div class="mileage-meter-wrapper">
+                            <div class="mileage-gauge-arc">
+                                <svg class="gauge-svg" viewBox="0 0 200 100">
+                                    <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#222f3e" stroke-width="12" stroke-linecap="round"/>
+                                    <path class="gauge-fill" id="md-gauge-fill" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#10ac84" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                                </svg>
+                                <div class="gauge-center-info">
+                                    <span class="gauge-remaining-val" id="md-remaining-km">- กม.</span>
+                                    <span class="gauge-remaining-lbl">ระยะทางคงเหลือ</span>
+                                </div>
+                            </div>
+                            <div class="mileage-kpi-row">
+                                <div>
+                                    <span class="kpi-label">ไมล์บันทึกล่าสุด</span>
+                                    <strong id="md-last-km">-</strong>
+                                    <span class="kpi-date" id="md-last-km-date">-</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="kpi-label">ไมล์กำหนด PM ครั้งถัดไป</span>
+                                    <strong id="md-next-km">-</strong>
+                                    <span class="kpi-date" id="md-plan-date">ประมาณการ: -</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Section: Yearly Timeline -->
+                <div class="modal-sub-card" style="margin-top: 1.25rem;">
+                    <h4 class="sub-card-title">ปฏิทินแผนซ่อมบำรุงประจำปี 2026 (Monthly Schedule Timeline)</h4>
+                    <p class="text-muted" style="font-size:0.75rem; margin-top:-0.5rem; margin-bottom:1rem;">แสดงโค้ดสัญลักษณ์สัปดาห์รอบเข้า PM ของแต่ละเดือนตามแผนงาน</p>
+                    <div class="monthly-timeline" id="md-monthly-timeline">
+                        <!-- Populated dynamically (12 months list) -->
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Generated PM Tasks list -->
+                <div class="modal-sub-card" style="margin-top: 1.25rem;">
+                    <h4 class="sub-card-title">ตารางการติดตามและสิทธิ์ซ่อมบำรุงในรอบงาน PM (Task Details)</h4>
+                    <div class="table-container no-shadow" style="max-height: 250px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ชื่องาน PM</th>
+                                    <th>รายละเอียด / รอบระยะที่กำหนด</th>
+                                    <th>วันที่เข้าแผน</th>
+                                    <th>วันครบกำหนด (Deadline)</th>
+                                    <th>สถานะดำเนินงาน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="md-tasks-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-close-md-footer">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 4.1.3 KPI Hover Drilldown Popup -->
+    <div class="kpi-hover-popover" id="kpi-hover-popover" aria-hidden="true"></div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

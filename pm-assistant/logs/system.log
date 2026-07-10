@@ -1,0 +1,2 @@
+2026-07-09T17:47:05 {"event": "settings_saved", "validation": {"ok": true, "checks": [{"name": "token", "ok": true, "message": "Token ดูปกติ"}, {"name": "target", "ok": true, "message": "Target ID format ถูกต้อง"}, {"name": "scheduler_time", "ok": true, "message": "รูปแบบเวลาถูกต้อง"}]}}
+2026-07-09T17:51:49 {"event": "settings_saved", "validation": {"ok": true, "checks": [{"name": "token", "ok": true, "message": "Token ดูปกติ"}, {"name": "target", "ok": true, "message": "Target ID format ถูกต้อง"}, {"name": "scheduler_time", "ok": true, "message": "รูปแบบเวลาถูกต้อง"}]}}

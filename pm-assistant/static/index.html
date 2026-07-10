@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Assistant | Less Remember. More Control.</title>
+    <!-- CSS File -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <!-- Wrench/Screwdriver icon -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.8 2.9 11.8c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.5z"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>PM Assistant</h1>
+                <p>Less Remember. More Control.</p>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li class="nav-item active" data-target="my-today">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    <span>My Today</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="dashboard">
+                <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+            </li>
+            <li class="nav-item" data-target="pm-manager">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-7 6H7V8h5v2zm5 4H7v-2h10v2zm0 4H7v-2h10v2z"/></svg>
+                    <span>แผนงาน PM</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="weekly-control">
+                <a href="#"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 2v4M16 2v4M4 9h16"/><path d="M8 13h3M13 13h3M8 17h3"/></svg><span>Weekly PM Control</span></a>
+            </li>
+            <li class="nav-item" data-target="calendar-view">
+                <a href="#">
+                    <!-- Calendar icon -->
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>ปฏิทินแผนงาน</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="next-day">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>ติดตามรถวันถัดไป</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="locations-page">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>ศูนย์บริการ</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="assistant-center">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+                    <span>PM Assistant Center</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="settings">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>ตั้งค่าระบบ</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <p>PM Assistant v1.6</p>
+            <p>© 2026 Developer Team</p>
+            <div class="mini-debug-menu">
+                <button class="mini-debug-toggle" onclick="toggleMiniDebugMenu(event)">เครื่องมือระบบ ▲</button>
+                <div id="mini-debug-panel" class="mini-debug-panel">
+                    <button class="mini-debug-link" onclick="openMiniPage('line-debug')">LINE Inspector</button>
+                    <button class="mini-debug-link" onclick="openMiniPage('line-debug'); loadRequestHistory();">Request History</button>
+                    <button class="mini-debug-link" onclick="openMiniPage('line-debug'); loadAllLogs();">Log Center</button>
+                    <button class="mini-debug-link" onclick="openMiniPage('line-debug'); runApiTesterDemo();">API Tester</button>
+                    <button class="mini-debug-link" onclick="downloadSystemSnapshot()">System Snapshot</button>
+                    <button class="mini-debug-link" onclick="openMiniPage('settings')">System Settings</button>
+                    <button class="mini-debug-link" onclick="runHealthCheck()">Health Check</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+
+        <!-- PM ASSISTANT v1.5: MY TODAY -->
+        <div id="my-today" class="page-section active-page">
+            <div class="header mytoday-header"><div class="header-title"><h2>PM Assistant Home</h2><p>วันนี้ต้องทำอะไร — ระบบเรียงคิวให้แล้ว</p></div><div class="header-actions"><button class="btn btn-success" onclick="sendTodayLineSummary()">📨 ส่งสรุป LINE</button><button class="btn btn-secondary" onclick="loadMyToday()">↻ Refresh</button><button class="btn btn-primary" onclick="openAddPlanModal()">+ เพิ่มแผน PM</button></div></div>
+            <div class="today-kpi-grid">
+              <div class="glass-panel today-kpi"><span>งานที่ต้องทำ</span><b id="today-active">0</b></div>
+              <div class="glass-panel today-kpi danger"><span>Overdue</span><b id="today-overdue">0</b></div>
+              <div class="glass-panel today-kpi success"><span>Completed วันนี้</span><b id="today-completed">0</b></div>
+              <div class="glass-panel today-kpi"><span>พักติดตาม</span><b id="today-paused">0</b></div>
+            </div>
+            <div class="glass-panel assistant-toolbar"><div><b>PM Assistant</b><span id="today-date-label"></span></div><label class="assistant-switch"><input type="checkbox" id="assistant-notify-toggle" onchange="toggleAssistantNotifications(this.checked)"><span>เปิดแจ้งเตือนลดภาระงาน</span></label></div>
+            <div id="today-mission" class="mission-banner"></div>
+            <div class="glass-panel mission-progress-card">
+              <div><b>Daily Mission Progress</b><span id="mission-progress-text">0 / 0 งาน</span></div>
+              <div class="mission-progress-track"><div id="mission-progress-bar" class="mission-progress-bar"></div></div>
+              <button class="btn btn-primary" onclick="startSmartQueue()">▶ เริ่ม Smart Queue</button>
+            </div>
+            <div id="today-task-list" class="today-task-list"><div class="empty-state">กำลังโหลดงานวันนี้...</div></div>
+            <div class="glass-panel weekly-mini"><div><h3>Weekly Summary</h3><p>สรุปสัปดาห์นี้แบบสั้น ๆ</p></div><div id="weekly-summary-mini" class="weekly-summary-values"></div></div>
+        </div>
+
+        <!-- PM ASSISTANT CENTER -->
+        <div id="assistant-center" class="page-section">
+          <div class="header">
+            <div class="header-title"><h2>PM Assistant Center</h2><p>คู่มือ การสอนใช้งาน และ Workflow อยู่ในที่เดียว</p></div>
+            <div class="header-actions"><button class="btn btn-primary" onclick="startInteractiveHelp()">✨ เริ่ม Interactive Help</button></div>
+          </div>
+          <div class="assistant-center-hero glass-panel">
+            <div><span class="eyebrow">QUICK START</span><h3>ใช้ระบบให้ช่วยลดงาน ไม่ใช่เพิ่มงาน</h3><p>เริ่มจาก My Today → ทำตาม Smart Queue → กด Complete เมื่อจบจริง</p></div>
+            <button class="btn btn-secondary" onclick="openAssistantTab('handbook')">เปิดคู่มือ</button>
+          </div>
+          <div class="assistant-center-tabs">
+            <button class="assistant-tab active" data-assistant-tab="quick" onclick="openAssistantTab('quick')">🚀 Quick Start</button>
+            <button class="assistant-tab" data-assistant-tab="handbook" onclick="openAssistantTab('handbook')">📘 PM Handbook</button>
+            <button class="assistant-tab" data-assistant-tab="workflow" onclick="openAssistantTab('workflow')">🗺 Workflow Map</button>
+            <button class="assistant-tab" data-assistant-tab="training" onclick="openAssistantTab('training')">🎓 Training Center</button>
+          </div>
+          <div id="assistant-tab-quick" class="assistant-tab-panel active">
+            <div class="guide-grid">
+              <article class="guide-card"><span>STEP 1</span><h3>เปิด My Today</h3><p>ดูเฉพาะงานวันนี้และ Overdue เริ่มจากรายการดาวสูงสุด</p></article>
+              <article class="guide-card"><span>STEP 2</span><h3>ติดตามงาน</h3><p>กด “โทรแล้ว” เพื่อจดโน้ตสั้น ๆ หรือ Pause เมื่อต้องรอ</p></article>
+              <article class="guide-card"><span>STEP 3</span><h3>Complete ครั้งเดียว</h3><p>อัปเดตสถานะ บันทึก History หยุด Reminder และรวมสรุปให้อัตโนมัติ</p></article>
+              <article class="guide-card"><span>STEP 4</span><h3>ดูสรุปตอนเย็น</h3><p>LINE สรุปเฉพาะงานเสร็จ งานค้าง และ Overdue</p></article>
+            </div>
+          </div>
+          <div id="assistant-tab-handbook" class="assistant-tab-panel">
+            <div class="handbook-layout">
+              <nav class="handbook-index">
+                <button onclick="showHandbookChapter('daily')">1. งานประจำวัน</button>
+                <button onclick="showHandbookChapter('follow')">2. การติดตาม</button>
+                <button onclick="showHandbookChapter('complete')">3. การปิดงาน</button>
+                <button onclick="showHandbookChapter('line')">4. LINE แจ้งเตือน</button>
+                <button onclick="showHandbookChapter('backup')">5. สำรองข้อมูล</button>
+              </nav>
+              <div id="handbook-content" class="glass-panel handbook-content"></div>
+            </div>
+          </div>
+          <div id="assistant-tab-workflow" class="assistant-tab-panel">
+            <div class="workflow-map">
+              <div class="workflow-node"><b>08:00</b><span>Morning Brief</span></div><i>→</i>
+              <div class="workflow-node"><b>เช้า</b><span>เปิด My Today</span></div><i>→</i>
+              <div class="workflow-node"><b>ระหว่างวัน</b><span>โทร / Pause</span></div><i>→</i>
+              <div class="workflow-node"><b>จบงาน</b><span>One Click Complete</span></div><i>→</i>
+              <div class="workflow-node"><b>17:30</b><span>Evening Summary</span></div>
+            </div>
+            <div class="decision-card glass-panel"><h3>รถเข้าแล้วหรือยัง?</h3><p><b>เข้าและทำเสร็จแล้ว</b> → กด Complete</p><p><b>ยังไม่เข้าแต่ติดตามแล้ว</b> → กด โทรแล้ว + ใส่โน้ต</p><p><b>ยังไม่ต้องติดตาม</b> → กด Pause และระบุเหตุผล</p></div>
+          </div>
+          <div id="assistant-tab-training" class="assistant-tab-panel">
+            <div class="training-grid">
+              <article class="training-card"><b>Level 1 · Beginner</b><h3>ใช้งาน My Today</h3><label><input type="checkbox" onchange="saveTrainingProgress()"> เข้าใจ Priority</label><label><input type="checkbox" onchange="saveTrainingProgress()"> ใช้โทรแล้ว / Pause</label><label><input type="checkbox" onchange="saveTrainingProgress()"> กด Complete ได้</label></article>
+              <article class="training-card"><b>Level 2 · Planner</b><h3>วางแผนและติดตาม</h3><label><input type="checkbox" onchange="saveTrainingProgress()"> สร้างแผน PM</label><label><input type="checkbox" onchange="saveTrainingProgress()"> ตรวจ Calendar</label><label><input type="checkbox" onchange="saveTrainingProgress()"> อ่าน Weekly Summary</label></article>
+              <article class="training-card"><b>Level 3 · Admin</b><h3>ตั้งค่าระบบ</h3><label><input type="checkbox" onchange="saveTrainingProgress()"> สำรองฐานข้อมูล</label><label><input type="checkbox" onchange="saveTrainingProgress()"> ตรวจ LINE Inspector</label><label><input type="checkbox" onchange="saveTrainingProgress()"> ตรวจ Scheduler</label></article>
+            </div>
+            <div class="glass-panel training-progress"><b>Training Progress</b><span id="training-progress-label">0%</span><div class="mission-progress-track"><div id="training-progress-bar" class="mission-progress-bar"></div></div></div>
+          </div>
+        </div>
+
+
+        <!-- PM ASSISTANT v1.6: WEEKLY PM CONTROL -->
+        <div id="weekly-control" class="page-section">
+          <div class="header"><div class="header-title"><h2>Weekly PM Control</h2><p>ติดตามรถเป็น Lot รายสัปดาห์ โดยไม่ต้องกำหนดวันเข้าที่แน่นอน</p></div><div class="header-actions"><button class="btn btn-secondary" onclick="downloadWeeklyTemplate()">↓ Template Excel</button><button class="btn btn-secondary" onclick="document.getElementById('weekly-import-file').click()">↑ Import Lot</button><input id="weekly-import-file" type="file" accept=".xlsx,.csv" hidden onchange="importWeeklyFile(this.files[0])"><button class="btn btn-primary" onclick="sendWeeklyLine()">ส่งรายการค้างเข้า LINE</button></div></div>
+          <div class="glass-panel weekly-toolbar"><label>เดือน <input id="weekly-month" type="month" class="form-control-noicon" onchange="loadWeeklyControl()"></label><label>สถานะ <select id="weekly-status" class="form-control-noicon" onchange="loadWeeklyControl()"><option value="all">ทั้งหมด</option><option value="pending">ยังไม่เข้า</option><option value="completed">เข้าแล้ว</option><option value="deferred">เลื่อน</option></select></label><button class="btn btn-secondary" onclick="loadWeeklyControl()">↻ Refresh</button></div>
+          <div class="weekly-summary-grid"><div class="glass-panel weekly-stat"><span>ทั้งหมด</span><b id="weekly-total">0</b></div><div class="glass-panel weekly-stat success"><span>เข้าแล้ว</span><b id="weekly-completed">0</b></div><div class="glass-panel weekly-stat warning"><span>ยังไม่เข้า</span><b id="weekly-pending">0</b></div><div class="glass-panel weekly-stat"><span>เลื่อน</span><b id="weekly-deferred">0</b></div></div>
+          <div id="weekly-tabs" class="weekly-tabs"></div>
+          <div class="glass-panel"><div class="table-header-container"><div><h3 id="weekly-list-title">รายการสัปดาห์</h3><p class="muted">กด “เข้าแล้ว” เมื่อรถเข้าดำเนินการ ระบบจะตัดออกจากรายการติดตาม LINE</p></div><button class="btn btn-secondary" onclick="copyWeeklyPending()">Copy รายการค้าง</button></div><div class="custom-table-container"><table class="custom-table weekly-table"><thead><tr><th>รถเบอร์</th><th>ทะเบียน</th><th>กลุ่ม</th><th>Week</th><th>Lot</th><th>สถานะ</th><th>หมายเหตุ</th><th>จัดการ</th></tr></thead><tbody id="weekly-table-body"><tr><td colspan="8">ยังไม่มีข้อมูล</td></tr></tbody></table></div></div>
+        </div>
+
+        <!-- SECTION 1: DASHBOARD -->
+        <div id="dashboard" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>ภาพรวมของระบบ (Dashboard)</h2>
+                    <p>สถิติและข้อมูลแผนซ่อมบำรุงรถทั้งหมด ณ ปัจจุบัน</p>
+                </div>
+                <div class="header-actions">
+                    <select id="dashboard-job-filter" class="select-control compact-filter" onchange="loadDashboardData()">
+                        <option value="">-- ชื่องาน PM ทั้งหมด --</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddPlanModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        สร้างแผนงาน PM ใหม่
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="glass-panel stat-card total">
+                    <div class="stat-header">
+                        <span>จำนวนรถทั้งหมดในระบบ</span>
+                        <div class="stat-icon">🚚</div>
+                    </div>
+                    <div class="stat-value" id="stat-total-vehicles">-</div>
+                    <div class="stat-label">คัน (ไม่ซ้ำทะเบียน)</div>
+                </div>
+                <div class="glass-panel stat-card planned">
+                    <div class="stat-header">
+                        <span>แผนรอเข้าซ่อมบำรุง</span>
+                        <div class="stat-icon">📋</div>
+                    </div>
+                    <div class="stat-value" id="stat-planned-plans">-</div>
+                    <div class="stat-label">รายการที่รอนัดหมาย/กำลังทำ</div>
+                </div>
+                <div class="glass-panel stat-card near-due">
+                    <div class="stat-header">
+                        <span>กำหนดด่วน (ใกล้ถึง)</span>
+                        <div class="stat-icon">⏰</div>
+                    </div>
+                    <div class="stat-value" id="stat-near-due">-</div>
+                    <div class="stat-label">คัน (ภายในระยะเวลากำหนดเตือน)</div>
+                </div>
+                <div class="glass-panel stat-card overdue">
+                    <div class="stat-header">
+                        <span>งานเลยกำหนดส่งมอบ</span>
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="stat-value" id="stat-overdue">-</div>
+                    <div class="stat-label">รายการที่เกิน Deadline</div>
+                </div>
+                <div class="glass-panel stat-card total">
+                    <div class="stat-header"><span>งานวันนี้</span><div class="stat-icon">📍</div></div>
+                    <div class="stat-value" id="stat-due-today">-</div>
+                    <div class="stat-label">รายการที่นัดเข้าวันนี้</div>
+                </div>
+                <div class="glass-panel stat-card planned">
+                    <div class="stat-header"><span>งานเดือนนี้</span><div class="stat-icon">🗓️</div></div>
+                    <div class="stat-value" id="stat-this-month">-</div>
+                    <div class="stat-label">รายการในเดือนปัจจุบัน</div>
+                </div>
+                <div class="glass-panel stat-card near-due">
+                    <div class="stat-header"><span>อัตราปิดงาน</span><div class="stat-icon">✅</div></div>
+                    <div class="stat-value" id="stat-completion-rate">-</div>
+                    <div class="stat-label">Completed / งานทั้งหมด</div>
+                </div>
+                <div class="glass-panel stat-card overdue">
+                    <div class="stat-header"><span>งานวันพรุ่งนี้</span><div class="stat-icon">🔔</div></div>
+                    <div class="stat-value" id="stat-tomorrow">-</div>
+                    <div class="stat-label">เตรียมแจ้งเตือนล่วงหน้า</div>
+                </div>
+            </div>
+
+            <!-- CHARTS & LISTS -->
+            <div class="dashboard-grid">
+                <!-- CHART PANEL -->
+                <div class="glass-panel chart-panel-with-filter">
+                    <div class="panel-title-row">
+                        <h3>สถิติแผนงานแยกตามศูนย์บริการ</h3>
+                        <div class="service-filter" id="dashboard-service-filter">
+                            <button class="filter-pill active" data-filter="total" onclick="setServiceTypeFilter('dashboard','total')">Total</button>
+                            <button class="filter-pill" data-filter="internal" onclick="setServiceTypeFilter('dashboard','internal')">ซ่อมใน</button>
+                            <button class="filter-pill" data-filter="external" onclick="setServiceTypeFilter('dashboard','external')">ซ่อมนอก</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="locationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- ALERTS / URGENT TASKS PANEL -->
+                <div class="glass-panel">
+                    <h3>แจ้งเตือนรายการด่วน / เลยกำหนด</h3>
+                    <div class="chart-container" style="height: auto; max-height: 300px; overflow-y: auto; margin-top: 1.5rem;">
+                        <div class="notify-list" id="urgent-list">
+                            <!-- Populated by JS -->
+                            <div class="notify-item info">
+                                <p style="color: var(--text-secondary); text-align: center; width: 100%;">กำลังโหลดข้อมูลแจ้งเตือน...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>สรุปงานตามประเภทศูนย์ซ่อม</h3>
+                    <div id="service-type-summary" class="summary-chip-grid"></div>
+                </div>
+                <div class="glass-panel">
+                    <h3>สรุปงานตามประเภทธุรกิจขนส่ง</h3>
+                    <div id="transport-summary" class="summary-chip-grid"></div>
+                </div>
+            </div>
+            <div class="dashboard-grid single-wide">
+                <div class="glass-panel">
+                    <h3>สรุปงานตามชื่องาน PM</h3>
+                    <div id="job-title-summary" class="summary-chip-grid summary-chip-grid-wide"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: PM MANAGER -->
+        <div id="pm-manager" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>จัดการแผนงาน PM (PM Scheduler Manager)</h2>
+                    <p>ตารางงานติดตาม ปรับปรุง แก้ไข และตรวจสอบรอบ PM ทั้งหมด</p>
+                </div>
+                <div class="header-actions">
+                    <!-- Import Button -->
+                    <button class="btn btn-secondary" onclick="triggerImportUpload()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        นำเข้า CSV
+                    </button>
+                    <input type="file" id="import-file-input" style="display: none;" onchange="handleImportFile(event)" accept=".csv,.xlsx">
+
+                    <!-- Export Button -->
+                    <button class="btn btn-secondary" onclick="exportPlans()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        ส่งออก Excel
+                    </button>
+
+                    <!-- Add Plan -->
+                    <button class="btn btn-primary" onclick="openAddPlanModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        สร้างแผนงาน PM ใหม่
+                    </button>
+                </div>
+            </div>
+
+            <!-- FILTER BAR -->
+            <div class="glass-panel">
+                <div class="table-header-container">
+                    <div class="search-filter-bar pm-filter-grid">
+                        <button id="toggle-bulk-mode-btn" class="btn btn-secondary bulk-toggle-btn" onclick="toggleBulkSelectionMode()" title="เปิดโหมดเลือกหลายรายการ">✓</button>
+                        <div class="input-group pm-search-wide">
+                            <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="search-input" class="form-control" placeholder="ค้นหาทะเบียนรถ, ชื่องาน, รายละเอียด, สถานที่, รุ่นรถ, ธุรกิจ..." oninput="fetchPlans()">
+                        </div>
+                        <select id="status-filter" class="select-control" onchange="fetchPlans()">
+                            <option value="">-- สถานะทั้งหมด --</option>
+                            <option value="Planned">Planned (รอนัดเข้า)</option>
+                            <option value="In Progress">In Progress (กำลังดำเนินการ)</option>
+                            <option value="Completed">Completed (เสร็จสิ้น)</option>
+                            <option value="Overdue">Overdue (เลยกำหนด)</option>
+                            <option value="Cancelled">Cancelled (ยกเลิก)</option>
+                        </select>
+                        <input id="plan-day-filter" type="number" min="1" max="31" class="select-control compact-date-filter" placeholder="Day" oninput="applyPlanFilters()"><select id="plan-month-filter" class="select-control compact-date-filter" onchange="applyPlanFilters()"><option value="">Month</option><option value="1">ม.ค.</option><option value="2">ก.พ.</option><option value="3">มี.ค.</option><option value="4">เม.ย.</option><option value="5">พ.ค.</option><option value="6">มิ.ย.</option><option value="7">ก.ค.</option><option value="8">ส.ค.</option><option value="9">ก.ย.</option><option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option></select><input id="plan-year-filter" type="number" min="2020" max="2200" class="select-control compact-date-filter" placeholder="Year" oninput="applyPlanFilters()"><select id="vehicle-detail-filter" class="select-control" onchange="applyPlanFilters()">
+                            <option value="">-- รายละเอียดรถทั้งหมด --</option>
+                        </select>
+                        <select id="location-filter" class="select-control" onchange="applyPlanFilters()">
+                            <option value="">-- สถานที่นัดเข้าทั้งหมด --</option>
+                        </select>
+                        <select id="job-filter" class="select-control" onchange="applyPlanFilters()">
+                            <option value="">-- ชื่องาน PM ทั้งหมด --</option>
+                        </select>
+                        <div class="service-filter pm-service-filter" id="pm-service-filter">
+                            <button class="filter-pill active" data-filter="total" onclick="setServiceTypeFilter('pm','total')">Total</button>
+                            <button class="filter-pill" data-filter="internal" onclick="setServiceTypeFilter('pm','internal')">ซ่อมใน</button>
+                            <button class="filter-pill" data-filter="external" onclick="setServiceTypeFilter('pm','external')">ซ่อมนอก</button>
+                        </div>
+                        <button id="bulk-delete-btn" class="btn btn-danger btn-bulk-delete" onclick="deleteSelectedPlans()" disabled>ลบที่เลือก (0)</button>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <div class="custom-table-container">
+                    <table class="custom-table pm-manager-table" id="plans-table">
+                        <thead>
+                            <tr>
+                                <th class="select-col"><input type="checkbox" id="select-all-plans" onchange="toggleSelectAllPlans(this)"></th>
+                                <th>ทะเบียนรถ</th>
+                                <th>รายละเอียดรถ</th>
+                                <th>ชื่องาน / รายละเอียด</th>
+                                <th>สถานที่นัดเข้า</th>
+                                <th>วันที่นัดเข้า</th>
+                                <th>วันที่เข้าจริง</th>
+                                <th>วัน Deadline</th>
+                                <th>สถานะ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plans-table-body">
+                            <!-- Populated by JS -->
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-muted);">กำลังโหลดข้อมูลแผนงาน...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: CALENDAR VIEW -->
+        <div id="calendar-view" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>ปฏิทินแผนงาน PM (PM Calendar Schedule)</h2>
+                    <p>แสดงตารางรอบรถเข้า PM รายวัน / รายเดือน พร้อมสรุปยอดจำนวนรถสะสมในแต่ละวัน</p>
+                </div>
+                <div class="header-actions">
+                    <select id="calendar-job-filter" class="select-control compact-filter" onchange="renderCalendar(); displaySelectedDatePlans(); renderCalendarInsights();">
+                        <option value="">-- ชื่องาน PM ทั้งหมด --</option>
+                    </select>
+                    <div class="service-filter" id="calendar-service-filter">
+                        <button class="filter-pill active" data-filter="total" onclick="setServiceTypeFilter('calendar','total')">Total</button>
+                        <button class="filter-pill" data-filter="internal" onclick="setServiceTypeFilter('calendar','internal')">ซ่อมใน</button>
+                        <button class="filter-pill" data-filter="external" onclick="setServiceTypeFilter('calendar','external')">ซ่อมนอก</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- CALENDAR GRID PANEL -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="adjustCalendarMonth(-1)" style="padding: 0.5rem 0.75rem;">
+                            <!-- Chevron left -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <h3 id="calendar-month-year" style="font-size: 1.25rem; font-weight: 700; background: linear-gradient(to right, #fff, var(--primary-hover)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">กรกฎาคม 2026</h3>
+                        <button class="btn btn-secondary" onclick="adjustCalendarMonth(1)" style="padding: 0.5rem 0.75rem;">
+                            <!-- Chevron right -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- CALENDAR GRID -->
+                    <div id="calendar-container">
+                        <!-- Headings Sunday - Saturday -->
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); border-bottom: 1px solid var(--panel-border); padding-bottom: 0.75rem; margin-bottom: 0.5rem;">
+                            <div style="color: #ef4444;">อา.</div>
+                            <div>จ.</div>
+                            <div>อ.</div>
+                            <div>พ.</div>
+                            <div>พฤ.</div>
+                            <div>ศ.</div>
+                            <div style="color: #06b6d4;">ส.</div>
+                        </div>
+
+                        <!-- Days Grid -->
+                        <div id="calendar-days-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; min-height: 280px;">
+                            <!-- Days populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELECTED DAY DETAILS PANEL -->
+                <div class="glass-panel" style="display: flex; flex-direction: column;">
+                    <div style="border-bottom: 1px solid var(--panel-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600;">รายละเอียดนัดหมาย</h3>
+                        <p id="calendar-selected-date-str" style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+                            เลือกวันที่บนปฏิทินเพื่อดูรายการรถเข้า PM
+                        </p>
+                    </div>
+
+                    <div style="flex-grow: 1; overflow-y: auto; max-height: 320px;">
+                        <div class="notify-list" id="calendar-day-plans-list">
+                            <!-- Populated by JS -->
+                            <div class="notify-item info" style="justify-content: center;">
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">กรุณาคลิกเลือกวันที่บนปฏิทิน</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-insight-grid">
+                <div class="glass-panel mini-insight-card"><span>เดือนนี้ทั้งหมด</span><b id="cal-total-month">-</b><small>รายการ PM ในเดือนที่แสดง</small></div>
+                <div class="glass-panel mini-insight-card"><span>ศูนย์ซ่อมภายใน</span><b id="cal-internal-month">-</b><small>งานที่ช่างบริษัทดูแล</small></div>
+                <div class="glass-panel mini-insight-card"><span>ศูนย์ซ่อมภายนอก</span><b id="cal-external-month">-</b><small>งานเข้าอู่/ศูนย์นอก</small></div>
+                <div class="glass-panel mini-insight-card"><span>วันที่งานหนาแน่นสุด</span><b id="cal-peak-day">-</b><small>ช่วยวางกำลังคนล่วงหน้า</small></div>
+            </div>
+            <div class="glass-panel calendar-job-summary"><div class="table-header-container"><div><h3>งาน PM ในเดือนนี้</h3><p class="muted">สรุปตามชื่องาน เพื่อเห็นว่ามีงานประเภทใดบ้าง</p></div></div><div id="calendar-job-summary-list" class="calendar-job-chips"></div></div>
+        </div>
+
+        <!-- SECTION 4: NEXT DAY TRACKING -->
+        <div id="next-day" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>ติดตามรถวันถัดไป (Next-Day Follow Up)</h2>
+                    <p>ตรวจสอบรถที่จะเข้าทำ PM ในวันพรุ่งนี้ พร้อมฟังก์ชันแจ้งเตือนด้วยตนเอง</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-success" id="send-nextday-line-btn" onclick="sendNextDayLine()">
+                        <!-- Send icon -->
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        ส่งแจ้งเตือนสรุปรายวันเข้าไลน์ทันที
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABLE PANEL -->
+            <div class="glass-panel">
+                <h3>รายการนัดเข้าวันพรุ่งนี้ (<span id="tomorrow-date-str">-</span>)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    * รายการรถที่ลงแผนที่ไว้นัดเข้าซ่อมบำรุงในวันพรุ่งนี้
+                </p>
+
+                <div class="custom-table-container">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ทะเบียนรถ/เบอร์รถ</th>
+                                <th>ชื่องาน / รายละเอียด</th>
+                                <th>สถานที่นัดเข้า</th>
+                                <th>วันที่นัดเข้า</th>
+                                <th>วัน Deadline</th>
+                                <th>สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nextday-table-body">
+                            <!-- Populated by JS -->
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">กำลังโหลดข้อมูลแผนงานวันถัดไป...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SECTION: LINE DEBUG CENTER -->
+        <div id="line-debug" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>LINE Inspector / Diagnostic Center</h2>
+                    <p>ศูนย์ตรวจสอบ LINE แบบละเอียด: Inspector, Raw Request/Response, Timeline, Logs, API Tester และ Snapshot</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshLineDebugCenter()">รีเฟรช</button>
+                    <button class="btn btn-secondary" onclick="downloadSystemSnapshot()">System Snapshot</button>
+                    <button class="btn btn-primary" onclick="runHealthCheck()">Run Health Check</button>
+                </div>
+            </div>
+
+            <div class="glass-panel debug-card wide-debug-card">
+                <div class="panel-title-row">
+                    <h3>1. LINE Inspector</h3>
+                    <button class="btn btn-secondary" onclick="loadLineInspector()">Inspect</button>
+                </div>
+                <div id="line-inspector" class="inspector-grid">กำลังโหลด...</div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>A. Connection Status</h3>
+                    <div id="debug-connection-status" class="debug-status-list">กำลังโหลด...</div>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>B. Test Push</h3>
+                    <textarea id="debug-test-message" class="form-control-noicon" rows="5">👋 ทดสอบส่งข้อความจาก LINE Debug Center</textarea>
+                    <div style="display:flex;gap:.75rem;margin-top:1rem;justify-content:flex-end;">
+                        <button class="btn btn-secondary" onclick="simulateLineMessage()">Preview Simulator</button>
+                        <button class="btn btn-primary" onclick="sendDebugTestPush()">ส่ง Test Push</button>
+                    </div>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>C. API Response</h3>
+                    <pre id="debug-api-response" class="debug-pre">ยังไม่มีข้อมูล Response</pre>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>D. Request Payload</h3>
+                    <pre id="debug-request-payload" class="debug-pre">ยังไม่มีข้อมูล Payload</pre>
+                </div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>Error Analyzer</h3>
+                    <div id="debug-error-analyzer" class="debug-status-list">ยังไม่มีข้อมูล Error</div>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>Config Validator</h3>
+                    <div id="debug-config-validator" class="debug-status-list">กำลังโหลด...</div>
+                </div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>Notification Timeline</h3>
+                    <div id="notification-timeline" class="timeline-box">ยังไม่มี Timeline</div>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>Request History</h3>
+                    <div id="request-history" class="log-box">ยังไม่มี Request History</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-title-row">
+                    <h3>LINE Message Simulator v2</h3>
+                    <button class="btn btn-secondary" onclick="simulateLineMessage()">จำลองข้อความ</button>
+                </div>
+                <div class="simulator-preview">
+                    <div><b>Target:</b> <span id="sim-target">-</span></div>
+                    <pre id="sim-message" class="debug-pre">กดจำลองข้อความเพื่อดูตัวอย่างก่อนส่งจริง</pre>
+                </div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>Webhook Monitor</h3>
+                    <div id="webhook-monitor" class="log-box">ยังไม่มีข้อมูล</div>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>Notification Log Upgrade</h3>
+                    <div id="notification-log-upgrade" class="log-box">ยังไม่มีข้อมูล</div>
+                </div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>Scheduler Log</h3>
+                    <pre id="scheduler-log" class="log-box">ยังไม่มีข้อมูล</pre>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>Line Log File</h3>
+                    <pre id="line-log" class="log-box">ยังไม่มีข้อมูล</pre>
+                </div>
+            </div>
+
+            <div class="debug-grid">
+                <div class="glass-panel debug-card">
+                    <h3>10. Log Center</h3>
+                    <div class="log-tabs">
+                        <button class="btn btn-secondary" onclick="loadDebugLog('line','line-log-center')">line</button>
+                        <button class="btn btn-secondary" onclick="loadDebugLog('webhook','line-log-center')">webhook</button>
+                        <button class="btn btn-secondary" onclick="loadDebugLog('scheduler','line-log-center')">scheduler</button>
+                        <button class="btn btn-secondary" onclick="loadDebugLog('system','line-log-center')">system</button>
+                        <button class="btn btn-secondary" onclick="loadDebugLog('api','line-log-center')">api</button>
+                    </div>
+                    <pre id="line-log-center" class="log-box">เลือก Log ที่ต้องการดู</pre>
+                </div>
+                <div class="glass-panel debug-card">
+                    <h3>API Tester</h3>
+                    <input id="api-tester-path" class="form-control-noicon" value="/api/line/inspector" style="margin-bottom:.75rem;">
+                    <div style="display:flex;gap:.75rem;margin-bottom:.75rem;">
+                        <select id="api-tester-method" class="form-control-noicon"><option>GET</option><option>POST</option></select>
+                        <button class="btn btn-primary" onclick="runApiTesterDemo()">Prepare Test</button>
+                    </div>
+                    <pre id="api-tester-output" class="debug-pre">ยังไม่มีข้อมูล API Tester</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: SETTINGS -->
+        <div id="settings" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>ตั้งค่าระบบ (System Settings)</h2>
+                    <p>จัดการการแจ้งเตือน Line Messaging API และเวลาส่งแจ้งเตือน</p>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- LEFT SETTINGS PANEL -->
+                <div class="glass-panel">
+                    <!-- Section 1: Line Settings -->
+                    <div class="settings-section">
+                        <div class="settings-title">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                            การตั้งค่าการแจ้งเตือน Line (Line Messaging API)
+                        </div>
+
+                        <div class="form-grid" style="margin-top: 1rem;">
+                            <div class="form-field-full">
+                                <label class="form-label" for="line-token">Line Channel Access Token</label>
+                                <input type="password" id="line-token" class="form-control-noicon" placeholder="ใส่ Channel Access Token ที่ได้จาก Line Developer Console...">
+                            </div>
+                            <div class="form-field-full">
+                                <label class="form-label" for="line-target">Line Target ID (User ID / Group ID)</label>
+                                <input type="text" id="line-target" class="form-control-noicon" placeholder="ระบบจะเติมอัตโนมัติเมื่อเลือกจาก LINE Targets...">
+                                <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 0.25rem;">
+                                    * หลังตั้ง Webhook แล้ว ให้พิมพ์ test ในกลุ่ม LINE ระบบจะค้นพบ Group ID อัตโนมัติ
+                                </small>
+                            </div>
+                            <div class="form-field-full">
+                                <label class="form-label" for="line-secret">Line Channel Secret <span style="color:var(--text-muted);font-weight:400;">(แนะนำสำหรับใช้งานจริง)</span></label>
+                                <input type="password" id="line-secret" class="form-control-noicon" placeholder="ใส่ Channel Secret เพื่อเปิดตรวจสอบลายเซ็น Webhook...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 1.5: LINE Webhook Center -->
+                    <div class="settings-section">
+                        <div class="settings-title">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            LINE Webhook Integration Center
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:var(--border-radius-md);border:1px solid var(--panel-border);">
+                            <div>
+                                <h4 style="font-size:0.95rem;font-weight:600;">เปิดรับ Webhook จาก LINE OA</h4>
+                                <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:0.25rem;">เมื่อเปิดแล้ว ระบบจะรับ Group ID / User ID จาก LINE และบันทึกไว้ในฐานข้อมูล</p>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="line-webhook-enabled" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="form-grid" style="margin-top:1rem;">
+                            <div class="form-field-full">
+                                <label class="form-label">Webhook URL สำหรับใส่ใน LINE Developers</label>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <input type="text" id="line-webhook-url" class="form-control-noicon" readonly>
+                                    <button class="btn btn-secondary" type="button" onclick="copyWebhookUrl()">Copy</button>
+                                </div>
+                                <small style="color:var(--text-muted);font-size:0.75rem;display:block;margin-top:0.25rem;">ถ้าทดสอบด้วย ngrok URL จะเป็น https://xxxx.ngrok-free.app/line/webhook</small>
+                            </div>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                                <label class="form-label" style="margin:0;">LINE Targets ที่ระบบค้นพบ</label>
+                                <button class="btn btn-secondary" type="button" onclick="loadLineTargets()">รีเฟรชรายการ</button>
+                            </div>
+                            <div id="line-targets-container" class="location-tags">
+                                <span style="color:var(--text-muted);font-size:0.85rem;">ยังไม่พบ Target ให้พิมพ์ test ในกลุ่ม LINE ก่อน</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Notifications Timing -->
+                    <div class="settings-section">
+                        <div class="settings-title">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            ตั้งเวลาสรุปรายงานและการแจ้งเตือนรายวันอัตโนมัติ
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: var(--border-radius-md); border: 1px solid var(--panel-border);">
+                            <div>
+                                <h4 style="font-size: 0.95rem; font-weight: 600;">เปิดระบบแจ้งเตือนอัตโนมัติ (Daily Scheduler)</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.25rem;">
+                                    ระบบหลังบ้านจะส่งรายงานสรุปยอดแผนงาน PM Day/Week/Month เข้า Line ทุกวันตามเวลาที่ตั้งไว้
+                                </p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="scheduler-enabled">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-grid" style="margin-top: 1.25rem;">
+                            <div>
+                                <label class="form-label" for="scheduler-time">เวลาส่งรายงานสรุปทุกวัน (น.)</label>
+                                <input type="time" id="scheduler-time" class="form-control-noicon" value="08:00">
+                            </div>
+                            <div>
+                                <label class="form-label" for="alert-days">เตือนล่วงหน้าก่อนเข้าทำ PM (วัน)</label>
+                                <input type="number" id="alert-days" class="form-control-noicon" min="1" max="15" value="3">
+                            </div>
+                            <div class="form-field-full">
+                                <label class="form-label" for="notification-template">Quick Edit ข้อความแจ้งเตือน</label>
+                                <textarea id="notification-template" class="form-control-noicon" rows="4" placeholder="เช่น 🔔 รายงาน PM {date} วันนี้ {today_count} คัน | พรุ่งนี้ {tomorrow_count} คัน | Overdue {overdue_count} คัน"></textarea>
+                                <small style="color: var(--text-muted); font-size: 0.75rem; display:block; margin-top:0.25rem;">ใช้ตัวแปรได้: {date}, {today_count}, {tomorrow_count}, {overdue_count}</small>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="settings-section">
+                        <div class="settings-title">📨 จำลองและส่งสรุปรายงาน LINE</div>
+                        <div class="form-grid" style="margin-top:1rem;">
+                            <div class="form-field-full"><label class="form-label">ตัวอย่างข้อความสรุป</label><textarea id="report-simulator-text" class="form-control-noicon" rows="10" placeholder="กดจำลองข้อความเพื่อดูตัวอย่างก่อนส่ง"></textarea></div>
+                            <div class="form-field-full report-action-row"><button type="button" class="btn btn-secondary" onclick="previewReportMessage('now')">👁 จำลองข้อความ</button><button type="button" class="btn btn-success" onclick="sendReportNow('now')">📨 ส่งสรุปรายงานทันที</button></div>
+                        </div>
+                        <div class="report-slot-grid">
+                          <div class="report-slot"><label><input type="checkbox" id="report-morning-enabled"> เช้า</label><input type="time" id="report-morning-time" value="07:30" class="form-control-noicon"><button class="btn btn-secondary" type="button" onclick="previewReportMessage('morning')">Preview</button></div>
+                          <div class="report-slot"><label><input type="checkbox" id="report-noon-enabled"> กลางวัน</label><input type="time" id="report-noon-time" value="12:00" class="form-control-noicon"><button class="btn btn-secondary" type="button" onclick="previewReportMessage('noon')">Preview</button></div>
+                          <div class="report-slot"><label><input type="checkbox" id="report-evening-enabled"> เย็น</label><input type="time" id="report-evening-time" value="17:00" class="form-control-noicon"><button class="btn btn-secondary" type="button" onclick="previewReportMessage('evening')">Preview</button></div>
+                        </div>
+                        <p class="muted" style="margin-top:.75rem;">หมายเหตุ: ต้องเปิดโปรแกรมไว้ ระบบจึงจะส่งอัตโนมัติตามเวลาที่ตั้ง</p>
+                    </div>
+                    <div class="settings-section">
+                        <div class="settings-title">Debug Mode</div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:var(--border-radius-md);border:1px solid var(--panel-border);">
+                            <div>
+                                <h4 style="font-size:0.95rem;font-weight:600;">เปิด Developer Debug Mode</h4>
+                                <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:0.25rem;">เมื่อเปิด ระบบจะแสดง Payload / Response / Error Analyzer ชัดขึ้นใน LINE Debug Center</p>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="debug-mode"><span class="slider"></span></label>
+                        </div>
+                    </div>
+
+                    <!-- Test Button -->
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="sendTestLineMessage()">ทดสอบส่งข้อความทักทาย</button>
+                        <button class="btn btn-primary" onclick="saveSettings()">บันทึกการตั้งค่า</button>
+                    </div>
+                </div>
+
+                <!-- RIGHT LOCATIONS PANEL -->
+                <div class="glass-panel">
+                    <div class="settings-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        จัดการรายชื่อศูนย์บริการ (Locations)
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.25rem;">
+                        เพิ่มหรือลบชื่อสถานที่ศูนย์บริการสำหรับการเลือกเวลาสร้างแผนงาน PM
+                    </p>
+
+                    <!-- Add Location Form -->
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <input type="text" id="new-location-input" class="form-control-noicon" placeholder="เช่น ศูนย์บริการใหม่ (อ.เมือง)..." style="flex-grow: 1;">
+                        <button class="btn btn-primary" onclick="addLocation()">เพิ่มสถานที่</button>
+                    </div>
+
+                    <!-- Location tags container -->
+                    <div class="location-tags" id="location-tags-container">
+                        <!-- Populated by JS -->
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">กำลังโหลดสถานที่...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: LOCATIONS MANAGER -->
+        <div id="locations-page" class="page-section">
+            <div class="header">
+                <div class="header-title">
+                    <h2>จัดการศูนย์บริการ / อู่ซ่อม (Locations Master)</h2>
+                    <p>ฐานข้อมูลศูนย์ซ่อม สำหรับวิเคราะห์ความหนาแน่นตามจังหวัด อำเภอ และแยกซ่อมใน/ซ่อมนอก</p>
+                </div>
+                <div class="header-actions">
+                    <input type="file" id="location-import-file-input" style="display:none;" onchange="handleLocationImportFile(event)" accept=".csv,.xlsx">
+                    <button class="btn btn-secondary" onclick="document.getElementById('location-import-file-input').click()">นำเข้า Locations</button>
+                    <button class="btn btn-secondary" onclick="exportLocationsExcel()">ส่งออก Excel</button>
+                </div>
+            </div>
+            <div class="glass-panel">
+                <h3>เพิ่ม / แก้ไขข้อมูลศูนย์บริการ</h3>
+                <input type="hidden" id="location-id">
+                <div class="form-grid" style="margin-top:1rem;">
+                    <div class="form-field-full">
+                        <label class="form-label">ชื่อศูนย์บริการ / อู่ซ่อม *</label>
+                        <input type="text" id="loc-name" class="form-control-noicon" placeholder="เช่น ฟลีตซ่อมบำรุงศรีราชา / ISUZU แหลมฉบัง">
+                    </div>
+                    <div>
+                        <label class="form-label">ประเภทศูนย์ *</label>
+                        <select id="loc-service-type" class="form-control-noicon">
+                            <option value="internal">ศูนย์ซ่อมภายใน</option>
+                            <option value="external">ศูนย์ซ่อมภายนอก</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">จังหวัด</label>
+                        <select id="loc-province" class="form-control-noicon"></select>
+                    </div>
+                    <div>
+                        <label class="form-label">อำเภอ</label>
+                        <select id="loc-district" class="form-control-noicon"></select>
+                    </div>
+                    <div class="form-field-full">
+                        <label class="form-label">ที่อยู่ / หมายเหตุ</label>
+                        <textarea id="loc-note" class="form-control-noicon" placeholder="รายละเอียดเพิ่มเติม เช่น ติดต่อใคร เบอร์โทร เงื่อนไขการเข้าซ่อม"></textarea>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1rem;">
+                    <button class="btn btn-secondary" onclick="resetLocationForm()">ล้างฟอร์ม</button>
+                    <button class="btn btn-primary" onclick="saveLocationMaster()">บันทึกศูนย์บริการ</button>
+                </div>
+            </div>
+            <div class="glass-panel">
+                <div class="table-header-container">
+                    <h3>รายการศูนย์บริการทั้งหมด</h3>
+                    <div class="service-filter" id="locations-service-filter">
+                        <button class="filter-pill active" data-filter="total" onclick="setServiceTypeFilter('locations','total')">Total</button>
+                        <button class="filter-pill" data-filter="internal" onclick="setServiceTypeFilter('locations','internal')">ซ่อมใน</button>
+                        <button class="filter-pill" data-filter="external" onclick="setServiceTypeFilter('locations','external')">ซ่อมนอก</button>
+                    </div>
+                </div>
+                <div class="custom-table-container">
+                    <table class="custom-table">
+                        <thead>
+                            <tr><th>ชื่อศูนย์/อู่</th><th>ประเภท</th><th>จังหวัด</th><th>อำเภอ</th><th>หมายเหตุ</th><th>จัดการ</th></tr>
+                        </thead>
+                        <tbody id="locations-table-body"><tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">กำลังโหลดข้อมูล...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL: ADD/EDIT PLAN -->
+    <div class="modal" id="plan-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">สร้างแผนงาน PM ใหม่</h3>
+                <button class="modal-close" onclick="closePlanModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plan-form" onsubmit="savePlan(event)">
+                    <input type="hidden" id="plan-id">
+                    
+                    <div class="form-grid">
+                        <div class="form-field-full">
+                            <label class="form-label" for="form-vehicle-no">ทะเบียนรถ / เบอร์รถ *</label>
+                            <input type="text" id="form-vehicle-no" list="car-list" class="form-control-noicon" required placeholder="พิมพ์เบอร์รถเพื่อเลือก หรือ พิมพ์ทะเบียนใหม่เอง...">
+                            <datalist id="car-list">
+                                <!-- Populated dynamically from Data Car.csv -->
+                            </datalist>
+                            <div id="selected-car-info" class="vehicle-info-box">พิมพ์หรือเลือกเบอร์รถ ระบบจะแสดง รุ่นรถ / ประเภทธุรกิจ / ประจำคลัง เพื่อช่วยตรวจสอบก่อนบันทึก</div>
+                        </div>
+
+                        <div class="form-field-full">
+                            <label class="form-label" for="form-job-title">ชื่องาน PM *</label>
+                            <input type="text" id="form-job-title" class="form-control-noicon" required placeholder="เช่น PM เช็คระยะรอบ 100,000 KM">
+                        </div>
+
+                        <div class="form-field-full">
+                            <label class="form-label" for="form-description">รายละเอียดเพิ่มเติม</label>
+                            <textarea id="form-description" class="form-control-noicon" placeholder="เช่น PMล้างจารบีลูกปืนล้อ, เปลี่ยนกรองอากาศ, เปลี่ยนน้ำมันเครื่อง..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="form-planned-date">วันที่นัดเข้า PM *</label>
+                            <input type="date" id="form-planned-date" class="form-control-noicon" required>
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="form-deadline-date">วัน Deadline *</label>
+                            <input type="date" id="form-deadline-date" class="form-control-noicon" required>
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="form-location">สถานที่นัดเข้า *</label>
+                            <select id="form-location" class="form-control-noicon" required style="cursor: pointer;">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="form-status">สถานะงาน</label>
+                            <select id="form-status" class="form-control-noicon" required style="cursor: pointer;">
+                                <option value="Planned">Planned (รอนัดเข้า)</option>
+                                <option value="In Progress">In Progress (กำลังดำเนินการ)</option>
+                                <option value="Completed">Completed (เสร็จสิ้น)</option>
+                                <option value="Cancelled">Cancelled (ยกเลิก)</option>
+                            </select>
+                        </div>
+
+                        <div id="actual-date-container" class="form-field-full" style="display: none;">
+                            <label class="form-label" for="form-actual-date">วันที่เข้าทำจริง</label>
+                            <input type="date" id="form-actual-date" class="form-control-noicon">
+                        </div>
+                    </div>
+
+                    <div style="display:none;">
+                        <input type="submit" id="hidden-submit-btn">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePlanModal()">ยกเลิก</button>
+                <button class="btn btn-primary" onclick="triggerFormSubmit()">บันทึกข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" style="position: fixed; bottom: 20px; right: 20px; padding: 1rem 1.5rem; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--panel-border); border-radius: var(--border-radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 2000; transform: translateY(150%); transition: transform 0.3s ease; backdrop-filter: blur(10px);">
+        <span id="toast-message" style="font-weight: 500; font-size: 0.9rem;">ข้อความแจ้งเตือน</span>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/js/app.js"></script>
+<div id="interactive-help" class="tour-overlay" aria-hidden="true">
+  <div class="tour-card"><span id="tour-step-label">STEP 1 / 4</span><h3 id="tour-title"></h3><p id="tour-text"></p><div class="tour-actions"><button class="btn btn-secondary" onclick="closeInteractiveHelp()">ปิด</button><button class="btn btn-primary" onclick="nextInteractiveHelp()">ถัดไป →</button></div></div>
+</div>
+</body>
+</html>
