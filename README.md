@@ -1,184 +1,86 @@
-# 🚛 Fleet Management Platform
+# FleetOS — Fleet Operating System
 
-Unified Fleet Management System developed by Piyapun Sommee.
+FleetOS is the parent fleet-management platform developed by Piyapun Sommee. It brings together two existing modules whose names remain unchanged:
 
-This repository contains two major systems:
+- **AutoPM** — Fleet preventive-maintenance dashboard
+- **PM Assistant** — Maintenance-management system
 
-- 🚛 AutoPM Dashboard (Fleet PM Dashboard)
-- 🛠 PM Assistant (Maintenance Management System)
+## Project structure
 
----
-
-# Project Structure
-
-```
+```text
 PM-Assistant-Repository/
-│
-├── autopm/
-│   ├── assets/
-│   ├── app.js
-│   ├── style.css
-│   ├── index.html
-│   └── data.csv
-│
-├── pm-assistant/
-│   ├── app/
-│   ├── static/
-│   ├── logs/
-│   ├── database.py
-│   ├── notifier.py
-│   ├── main.py
-│   └── requirements.txt
-│
+├── autopm/                 # AutoPM
+├── pm-assistant/           # PM Assistant
+├── docs/
+│   └── PHASE_2_PLAN.md
 ├── AGENTS.md
-├── ROADMAP.md
 ├── PROJECT_CONTEXT.md
+├── ROADMAP.md
 ├── CHANGELOG.md
 └── README.md
 ```
 
----
+Phase 2.0 changes the parent-platform name and establishes development governance only. It does not rename folders, Python modules, API paths, database tables, URLs, Netlify or Railway projects, or application screens.
 
-# Project Overview
+## Modules
 
-## AutoPM
+### AutoPM
 
-Fleet Preventive Maintenance Dashboard
+AutoPM is the fleet preventive-maintenance dashboard. Its current capabilities include PM dashboards, vehicle status, KPI reporting, PM calendars, Google Sheets integration, fleet statistics, business-unit filters, and executive dashboards.
 
-Current Features
+Technology: HTML, CSS, JavaScript, and Google Apps Script.
 
-- PM Dashboard
-- Vehicle Status
-- KPI
-- PM Calendar
-- Google Sheets API
-- Fleet Statistics
-- Business Unit Filter
-- Executive Dashboard
+### PM Assistant
 
-Technology
+PM Assistant is the maintenance-management system. Its current capabilities include PM planning, calendars, notifications, LINE integration, vehicle and location masters, PM history, scheduling, import/export, and a FastAPI backend.
 
-- HTML
-- CSS
-- JavaScript
-- Google Apps Script
+Technology: Python, FastAPI, SQLAlchemy, SQLite, with Railway and PostgreSQL readiness planned.
 
----
+## Target architecture
 
-## PM Assistant
-
-Maintenance Management Platform
-
-Current Features
-
-- PM Planning
-- Calendar
-- Notification
-- LINE Notify
-- Vehicle Master
-- Location Master
-- PM History
-- Scheduler
-- Import / Export
-- FastAPI Backend
-
-Technology
-
-- Python
-- FastAPI
-- SQLAlchemy
-- SQLite
-- Railway (planned)
-- PostgreSQL (planned)
-
----
-
-# Future Architecture
-
-```
-AutoPM
-      │
-      ▼
- REST API
-      │
-      ▼
-PM Assistant
-      │
-      ▼
- PostgreSQL
-      │
-      ▼
- Railway
+```text
+FleetOS
+├── AutoPM
+└── PM Assistant
+    ├── REST API
+    └── Data persistence
 ```
 
----
+Deployment and database decisions are governed by the Phase 2 plan and must pass their approval gates before implementation.
 
-# Repository Goal
+## Development governance
 
-Create one complete Fleet Management Platform including
+Every task that may modify code or project files must follow this sequence:
 
-- Preventive Maintenance
-- Corrective Maintenance
-- Vehicle Database
-- Dashboard
-- KPI
-- Cost Analysis
-- Tire Management
-- Notification
-- Executive Dashboard
+```text
+Analyze
+→ Explain
+→ Architecture Impact
+→ Risk Analysis
+→ Plan
+→ Wait Approval
+→ Modify Code
+→ Run Tests
+→ Create Summary
+→ Commit
+```
 
----
+No application source code may be modified before explicit human approval.
 
-# Current Status
+## Current status
 
-| Module | Status |
-|---------|--------|
+| Area | Status |
+| --- | --- |
 | AutoPM | Stable |
 | PM Assistant | Development |
-| Railway | Planned |
-| PostgreSQL | Planned |
-| Merge Project | Planning |
+| Phase 1 — Repository Foundation and Architecture Audit | Complete |
+| Phase 2 — FleetOS Architecture and Deployment Readiness | In progress |
 
----
+See [ROADMAP.md](ROADMAP.md) and [docs/PHASE_2_PLAN.md](docs/PHASE_2_PLAN.md) for the approved direction and gates.
 
-# Development Workflow
+## Maintainer
 
-```
-GitHub
-
-↓
-
-Codex
-
-↓
-
-Analyze
-
-↓
-
-Planning
-
-↓
-
-Develop
-
-↓
-
-Commit
-
-↓
-
-Railway Deploy
-```
-
----
-
-# Maintainer
-
-**Piyapun Sommee**
-
-Senior Maintenance Planning Officer
-
-Fleet Management System Developer
-
+**Piyapun Sommee**  
+Senior Maintenance Planning Officer  
+Fleet Management System Developer  
 Thailand
