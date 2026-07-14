@@ -131,3 +131,19 @@ AGENTS.md
 PROJECT_CONTEXT.md
 
 ROADMAP.md
+
+---
+
+## Engineering Standard
+
+FleetOS Engineering Standard v1.0:
+
+- [Engineering Standard index](docs/engineering/README.md)
+- [Development lifecycle](docs/engineering/DEVELOPMENT_LIFECYCLE.md)
+- [Git and branch standard](docs/engineering/GIT_AND_BRANCH_STANDARD.md)
+- [Coding standard](docs/engineering/CODING_STANDARD.md)
+- [API and data standard](docs/engineering/API_AND_DATA_STANDARD.md)
+- [Testing and quality standard](docs/engineering/TESTING_AND_QUALITY_STANDARD.md)
+- [Security and observability standard](docs/engineering/SECURITY_AND_OBSERVABILITY_STANDARD.md)
+- [AI collaboration standard](docs/engineering/AI_COLLABORATION_STANDARD.md)
+- [Review and release checklists](docs/engineering/REVIEW_RELEASE_CHECKLISTS.md)
