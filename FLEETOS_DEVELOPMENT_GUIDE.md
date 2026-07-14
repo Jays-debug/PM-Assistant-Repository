@@ -147,3 +147,14 @@ FleetOS Engineering Standard v1.0:
 - [Security and observability standard](docs/engineering/SECURITY_AND_OBSERVABILITY_STANDARD.md)
 - [AI collaboration standard](docs/engineering/AI_COLLABORATION_STANDARD.md)
 - [Review and release checklists](docs/engineering/REVIEW_RELEASE_CHECKLISTS.md)
+
+---
+
+## FleetOS v1.0 Blueprint
+
+- [Blueprint index](docs/blueprint/README.md)
+- [FleetOS v1.0 Blueprint](docs/blueprint/FLEETOS_V1_BLUEPRINT.md)
+- [System context and module map](docs/blueprint/SYSTEM_CONTEXT_AND_MODULE_MAP.md)
+- [Data and integration flow](docs/blueprint/DATA_AND_INTEGRATION_FLOW.md)
+- [Deployment and runtime blueprint](docs/blueprint/DEPLOYMENT_AND_RUNTIME_BLUEPRINT.md)
+- [Implementation roadmap](docs/blueprint/IMPLEMENTATION_ROADMAP.md)
