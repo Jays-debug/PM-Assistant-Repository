@@ -170,3 +170,15 @@ FleetOS Engineering Standard v1.0:
 - [Non-functional requirements](docs/product/NON_FUNCTIONAL_REQUIREMENTS.md)
 - [User workflows and acceptance](docs/product/USER_WORKFLOWS_AND_ACCEPTANCE.md)
 - [v1 scope and release criteria](docs/product/V1_SCOPE_AND_RELEASE_CRITERIA.md)
+
+---
+
+## FleetOS Domain Model v1.0
+
+- [Domain Model index](docs/domain/README.md)
+- [Canonical Domain Model](docs/domain/DOMAIN_MODEL.md)
+- [Entity Catalog](docs/domain/ENTITY_CATALOG.md)
+- [Aggregates and Boundaries](docs/domain/AGGREGATES_AND_BOUNDARIES.md)
+- [State and Lifecycle Model](docs/domain/STATE_AND_LIFECYCLE_MODEL.md)
+- [Domain Events and Audit](docs/domain/DOMAIN_EVENTS_AND_AUDIT.md)
+- [Domain Rules and Invariants](docs/domain/DOMAIN_RULES_AND_INVARIANTS.md)
