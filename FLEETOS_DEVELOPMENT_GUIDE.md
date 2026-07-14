@@ -158,3 +158,15 @@ FleetOS Engineering Standard v1.0:
 - [Data and integration flow](docs/blueprint/DATA_AND_INTEGRATION_FLOW.md)
 - [Deployment and runtime blueprint](docs/blueprint/DEPLOYMENT_AND_RUNTIME_BLUEPRINT.md)
 - [Implementation roadmap](docs/blueprint/IMPLEMENTATION_ROADMAP.md)
+
+---
+
+## FleetOS Product Specification v1.0
+
+- [Product Specification index](docs/product/README.md)
+- [FleetOS Product Specification](docs/product/FLEETOS_PRODUCT_SPECIFICATION.md)
+- [User roles and personas](docs/product/USER_ROLES_AND_PERSONAS.md)
+- [Functional requirements](docs/product/FUNCTIONAL_REQUIREMENTS.md)
+- [Non-functional requirements](docs/product/NON_FUNCTIONAL_REQUIREMENTS.md)
+- [User workflows and acceptance](docs/product/USER_WORKFLOWS_AND_ACCEPTANCE.md)
+- [v1 scope and release criteria](docs/product/V1_SCOPE_AND_RELEASE_CRITERIA.md)
