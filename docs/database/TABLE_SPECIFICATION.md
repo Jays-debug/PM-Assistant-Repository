@@ -1,0 +1,386 @@
+# FleetOS Table Specification
+
+## Purpose and interpretation
+
+This document inventories current SQLite implementation evidence and specifies conceptual FleetOS v1.0 target tables. It contains no executable SQL and does not approve physical names, data types, identifier strategies, ORM models, or migration actions.
+
+Candidate target names exist to make relationships reviewable. They are not approved replacements for existing tables. Every target table is owned by PM Assistant unless an unresolved enterprise owner is explicitly noted. AutoPM has no direct access to any table.
+
+## Specification conventions
+
+- **Conceptual key** describes business meaning, not a selected physical key type.
+- **Important fields** are logical fields and may map differently after implementation approval.
+- **Candidate constraints** require profiling and approval before enforcement.
+- **Retention pending** means no duration or deletion policy is approved.
+- **Sensitivity** uses the classes defined in [Schema Design](SCHEMA_DESIGN.md).
+- Original source values and historical snapshots are preserved whenever normalization or master-data change could alter meaning.
+
+## Current SQLite implementation evidence
+
+| Current table | Observed purpose and key | Relationship evidence | Target-design concern |
+| --- | --- | --- | --- |
+| `vehicle_master` | Vehicle attributes; local integer ID; `vehicle_no` currently unique | Plans and campaign items refer by text rather than demonstrated foreign key | `vehicle_no` is transitional only; enterprise owner and future identity unresolved. |
+| `location_master` | Location attributes; local integer ID; name currently unique | PM plans store location text | Name is not a stable identity; historical location text must remain. |
+| `pm_plan` | PM plan and generic status; local integer ID | Vehicle and location are textual; snapshots are denormalized | Generic status needs reviewed domain mapping; snapshot evidence must not be discarded. |
+| `pm_history` | Text before/after plan history; local integer ID | `pm_plan_id` is present without demonstrated foreign key | Audit shape, correction, sensitivity, and referential rules need approval. |
+| `pm_task_state` | Pause, follow-up, snooze, completion/reminder task state | One local record per `pm_plan_id` is implied | Completion and workflow semantics must be separated. |
+| `weekly_campaign` | Weekly campaign header | Items refer through local campaign ID | Uniqueness, lifecycle, and retention rules unresolved. |
+| `weekly_campaign_item` | Vehicle/week campaign item and status | Text vehicle, optional plan ID, local campaign ID | Orphans, duplicate membership, status meaning, and snapshot rules need profiling. |
+| `user_master` | Local username, display name, role, active flag | Actor fields elsewhere are text | Identity provider, role authority, and actor linkage are unresolved. |
+| `settings` | Key/value application settings | No relational link | Current values may include sensitive configuration; target secret boundary is unresolved. |
+| `line_targets` | LINE source/target identity and active state | Notification logs use target text | Recipient authorization, redaction, identity lifecycle, and retention unresolved. |
+| `line_webhook_events` | Incoming LINE event and raw payload | No demonstrated durable business link | Raw payload minimization, signature evidence, access, and retention require approval. |
+| `notification_log` | Delivery result, target, message, response | Intent and attempt are not separated | Sensitive targets/payloads and retry/idempotency need a target redesign. |
+| `import_log` | File import summary and errors | No row-level outcomes demonstrated | Batch/replay identity, row classification, quarantine, and provenance are required. |
+
+The current implementation also contains startup logic that copies selected legacy `locations` and `pm_plans` data. Those legacy names are migration evidence, not target tables.
+
+## FleetOS v1.0 target conceptual tables
+
+### Reference and identity
+
+#### Candidate: `vehicle_record`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Represent the PM Assistant-side reviewed vehicle reference used by maintenance records without claiming enterprise Vehicle Master ownership. |
+| Authoritative owner | Enterprise vehicle ownership unresolved; PM Assistant owns its maintenance reference and reconciliation evidence. |
+| Conceptual key | Immutable internal record key; no physical type selected. `fleetos_vehicle_id` may be associated only after later approval. |
+| Important fields | lifecycle state, current approved display attributes, effective dates, created/updated evidence, optional proposed future canonical reference. |
+| Relationships | Parent of vehicle aliases, plan links, mileage records, campaign items, and reconciliation decisions where a reviewed match exists. |
+| Candidate constraints | Internal key unique; lifecycle values controlled; effective period ordered. Do not make `vehicle_no` the permanent primary key. |
+| Provenance and audit | Creation source, original master attributes, mapping version, reviewer, merge/split/correction lineage. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; historical references must survive retirement or merge. |
+| Unresolved decisions | Enterprise owner, `fleetos_vehicle_id`, identifier lifecycle, required attributes, merge/split and retirement rules. |
+
+#### Candidate: `vehicle_alias`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve effective-dated vehicle numbers, registrations, vehicle codes, and other namespaced aliases. |
+| Authoritative owner | PM Assistant for reconciliation evidence; underlying business-identifier owners unresolved. |
+| Conceptual key | Vehicle reference plus alias namespace, original value, source, and effective period. |
+| Important fields | alias type/namespace, original value, normalized value, normalization version, source, effective dates, review state. |
+| Relationships | Many aliases to one reviewed vehicle; may be referenced by reconciliation evidence. |
+| Candidate constraints | No overlapping active uniqueness unless approved per namespace; normalized uniqueness must not conceal collisions. |
+| Provenance and audit | Original value, source record, batch, classification, reviewer, superseded alias. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; historical aliases should be retained. |
+| Unresolved decisions | Alias namespaces, reuse, registration policy, Thai/Arabic digit handling, punctuation normalization. |
+
+#### Candidate: `location_record`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Represent reviewed maintenance locations while preserving historical plan labels. |
+| Authoritative owner | Location enterprise owner unresolved; PM Assistant owns its maintenance reference during transition. |
+| Conceptual key | Immutable internal record key; location name is not the key. |
+| Important fields | approved display name, province, district, service type, address reference, lifecycle/effective dates. |
+| Relationships | Parent of location aliases and reviewed plan location links. |
+| Candidate constraints | Internal key unique; approved lifecycle values; name uniqueness only if later policy proves its scope. |
+| Provenance and audit | Source, original values, reviewer, create/update/rename/merge lineage. |
+| Sensitivity | Operational internal; address may require restricted projection. |
+| Retention status | Pending; historical location references and aliases must survive rename/retirement. |
+| Unresolved decisions | Stable shared identifier, enterprise owner, merge/rename rules, address classification. |
+
+#### Candidate: `location_alias`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve source and historical location labels and reviewed mappings. |
+| Authoritative owner | PM Assistant reconciliation process; enterprise ownership unresolved. |
+| Conceptual key | Location reference, original alias, source, and effective period. |
+| Important fields | original value, normalized value, normalization version, source, mapping state, effective dates. |
+| Relationships | Many aliases to one reviewed location; referenced by reconciliation decisions. |
+| Candidate constraints | Exact duplicate prevention within approved source scope; ambiguous aliases remain quarantined. |
+| Provenance and audit | Source record, batch, decision, reviewer, prior mapping. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; preserve historical labels. |
+| Unresolved decisions | Canonical-name rules, alias approval authority, effective-date policy. |
+
+### Maintenance
+
+#### Candidate: `pm_plan`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Store authoritative PM plan state and historical point-in-time vehicle/location/grouping labels. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Immutable internal plan key; external stable plan identity remains unresolved. |
+| Important fields | reviewed vehicle/location references when available, vehicle/location snapshots, title/description, planned/deadline dates, workflow state reference/value, concurrency marker, created/updated evidence. |
+| Relationships | Vehicle and location references; parent of workflow, completion, task, history, campaign links, notification causes, and audit evidence. |
+| Candidate constraints | Required plan fields; valid date ordering where approved; workflow values controlled; no fabricated master reference. |
+| Provenance and audit | Creation/import source, original source values, batch, actor/process, mapping/rule versions, before/after evidence. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; deletion/cancellation/archive behavior unresolved and history must be preserved. |
+| Unresolved decisions | Recurrence model, external identity, plan deletion, workflow vocabulary, date rules, authorization. |
+
+#### Candidate: `pm_workflow_transition`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Append workflow transitions without conflating completion, mileage, or notification status. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | One immutable transition event for one plan. |
+| Important fields | old/new `pm_workflow_status`, effective/recorded times, reason, actor/process, correlation and causation. |
+| Relationships | Many transitions to one PM plan; may cause notification intent and audit evidence. |
+| Candidate constraints | Approved transition graph; old/new values present as applicable; event immutability. |
+| Provenance and audit | Initiating action, source, actor/process, correlation, correction/supersession link. |
+| Sensitivity | Audit controlled. |
+| Retention status | Pending; expected append-oriented with correction evidence. |
+| Unresolved decisions | Vocabulary, transition authorization, backdating, correction and retention policy. |
+
+#### Candidate: `pm_completion_event`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record explicit completion, reopen, correction, and re-completion independently of workflow and mileage. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | One immutable completion-domain event for one PM plan. |
+| Important fields | old/new `completion_status`, actual/effective time, recorded time, safe evidence reference, reason, actor/process. |
+| Relationships | Many completion events to one plan; may reference history/audit and cause notifications. |
+| Candidate constraints | Approved completion transition graph; evidence requirements; no implicit completion from other statuses. |
+| Provenance and audit | Initiator, correlation, before/after status, evidence reference, correction chain. |
+| Sensitivity | Audit controlled; evidence may be sensitive. |
+| Retention status | Pending; prior completion evidence must not be concealed. |
+| Unresolved decisions | Evidence, backdating, reopen, correction, delete/privacy, and authorization policy. |
+
+#### Candidate: `pm_task_state`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Store current task-control state such as pause, follow-up, snooze, and notes without acting as completion authority. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | At most one current task-state record per plan if approved. |
+| Important fields | paused state/reason, follow-up state, safe note, snooze and reminder times, concurrency marker. |
+| Relationships | One current record to one PM plan; changes produce audit/history. |
+| Candidate constraints | Candidate one-to-one plan relationship; date validity; bounded controlled values where approved. |
+| Provenance and audit | Actor/process, old/new values, reason, correlation, recorded time. |
+| Sensitivity | Operational internal; notes may be sensitive. |
+| Retention status | Pending; operational state may be superseded while history remains. |
+| Unresolved decisions | Task vocabulary, note retention, completion-field migration, authorization. |
+
+#### Candidate: `maintenance_mileage_record`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve accepted maintenance-mileage evidence after source ownership and validation rules are approved. |
+| Authoritative owner | PM Assistant for accepted maintenance records; upstream odometer producer remains unresolved. |
+| Conceptual key | Immutable accepted reading identity plus vehicle and source identity. |
+| Important fields | vehicle reference, original/raw reading, parsed reading, unit, measured/received/recorded times, source, validation outcome, reset/replacement and correction links. |
+| Relationships | Vehicle, import/source evidence, corrections, and mileage calculations. |
+| Candidate constraints | Non-negative/range rules only after approval; source/replay duplicate detection; required explicit times and unit. |
+| Provenance and audit | Source record, batch, original value, parsing/validation rule versions, reviewer/process, correction chain. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; accepted raw evidence must survive rule rollback. |
+| Unresolved decisions | Producer authority, units, reset/replacement, ordering, duplicates, source priority, stale thresholds. |
+
+#### Candidate: `pm_mileage_calculation`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record reproducible `pm_mileage_status` calculations separately from raw mileage and other statuses. |
+| Authoritative owner | PM Assistant after calculation-rule approval. |
+| Conceptual key | Vehicle/plan context, exact accepted inputs, rule version, and calculation event. |
+| Important fields | input references, rule version, calculation time, freshness, remaining/threshold values where approved, `pm_mileage_status`, supersession link. |
+| Relationships | Accepted mileage records; optional plan context; audit evidence. |
+| Candidate constraints | Required input and rule references; controlled result vocabulary; one current result per approved context without deleting prior results. |
+| Provenance and audit | Input lineage, rule version, process, time, superseded calculation. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; calculations must remain reproducible while raw evidence is retained. |
+| Unresolved decisions | Thresholds, vocabulary, plan association, recalculation cadence, stale/unknown behavior. |
+
+### Campaigns
+
+#### Candidate: `maintenance_campaign`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Represent an approved maintenance-control campaign or period. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Immutable campaign key; business uniqueness scope unresolved. |
+| Important fields | name, period/year/month, lifecycle state, note, created/updated evidence. |
+| Relationships | Parent of campaign items. |
+| Candidate constraints | Valid period; controlled lifecycle; uniqueness only after campaign business rules are approved. |
+| Provenance and audit | Creator/source, before/after changes, correlation. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending. |
+| Unresolved decisions | Generalized versus weekly model, uniqueness, archive/delete, status vocabulary. |
+
+#### Candidate: `maintenance_campaign_item`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve campaign membership, historical labels, schedule grouping, and optional plan association. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Campaign plus one business item identity; exact uniqueness rule unresolved. |
+| Important fields | campaign, vehicle/plan references when reviewed, original vehicle and registration snapshots, PM group, week/lot, item status, actual date, note. |
+| Relationships | Campaign parent; optional vehicle and PM plan; audit/history. |
+| Candidate constraints | Required campaign; duplicate membership rule after profiling; no fabricated vehicle or plan. |
+| Provenance and audit | Import/source record, original values, mapping decision, actor/process, corrections. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; campaign snapshots should be preserved. |
+| Unresolved decisions | Item status domain, uniqueness, plan linkage, correction/delete policy. |
+
+### Import, reconciliation, and quarantine
+
+#### Candidate: `import_batch`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record one controlled import/synchronization run from receipt through final disposition. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Immutable batch identity; replay identity format unresolved. |
+| Important fields | source type and safe reference, checksum/replay reference if approved, contract/rule versions, actor/process, start/end times, classification counts, confirmation and final state. |
+| Relationships | Parent of import rows, quarantine cases, reconciliation decisions, and audit evidence. |
+| Candidate constraints | Unique approved replay scope; non-negative counts; final counts reconcile with row outcomes. |
+| Provenance and audit | Source metadata, confirmation, replay disposition, correlation, safe error summary. |
+| Sensitivity | Audit controlled; source references may be sensitive. |
+| Retention status | Pending; evidence must support reconciliation and replay analysis. |
+| Unresolved decisions | Atomicity, checksum, resume/retry, source-file retention, idempotency and acceptance thresholds. |
+
+#### Candidate: `import_row_outcome`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve each parsed source row and its validation, normalization, classification, and mutation outcome. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Batch plus stable source row reference; row order alone is not business identity. |
+| Important fields | safe row reference, original values or protected evidence reference, normalized values, rule versions, classification, target reference, error codes, outcome. |
+| Relationships | One batch; optional quarantine case, target record, and reconciliation decision. |
+| Candidate constraints | One recorded outcome per batch/source-row attempt as approved; controlled classifications; no hidden partial result. |
+| Provenance and audit | Complete parse/validation lineage, process, decision time, correction/supersession. |
+| Sensitivity | Sensitive internal or audit controlled depending on source content. |
+| Retention status | Pending; data minimization and protected raw-source retention require approval. |
+| Unresolved decisions | Row identity, protected payload storage, correction, retry, retention, privacy. |
+
+#### Candidate: `data_quality_case`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Quarantine orphan, duplicate, ambiguous, conflicting, stale, missing, rejected, and correction cases for review. |
+| Authoritative owner | PM Assistant reconciliation process. |
+| Conceptual key | Immutable case tied to domain, source evidence, and classification. |
+| Important fields | classification, domain, safe source references, candidate references, state, reason, reviewer, disposition, mapping version, timestamps. |
+| Relationships | Import row/batch, identity aliases, affected target records, superseded decision. |
+| Candidate constraints | Controlled classification and lifecycle; resolution requires actor/process and disposition; unresolved cases cannot masquerade as accepted. |
+| Provenance and audit | Original evidence links, rule/mapping version, review history, correction chain. |
+| Sensitivity | Audit controlled. |
+| Retention status | Pending; resolution evidence should be retained. |
+| Unresolved decisions | Review authority, SLA, merge/split workflow, sensitive evidence access, retention. |
+
+### Notification and scheduler
+
+#### Candidate: `notification_intent`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record one authorized business intent to notify, distinct from provider attempts. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Business cause plus approved idempotency scope. |
+| Important fields | cause domain/reference, channel, approved recipient reference, template/version, safe payload reference/hash, `notification_status`, idempotency reference, created time. |
+| Relationships | Business cause, recipient reference, delivery attempts, audit event. |
+| Candidate constraints | Approved idempotency uniqueness; required authorized cause/recipient; controlled intent status. |
+| Provenance and audit | Initiator, cause, template/rule versions, correlation, suppression decision. |
+| Sensitivity | Sensitive internal; targets and content require redaction/minimization. |
+| Retention status | Pending. |
+| Unresolved decisions | Recipient authority, idempotency, templates, payload storage, channel routing, retention. |
+
+#### Candidate: `notification_attempt`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record each provider delivery attempt and safe outcome for one notification intent. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Intent plus monotonically ordered attempt identity; physical strategy unresolved. |
+| Important fields | attempt number/reference, start/end times, safe provider reference, outcome, retry classification, redacted response summary. |
+| Relationships | One notification intent; optional scheduler execution; audit evidence. |
+| Candidate constraints | Attempt uniqueness within intent; controlled result; retry bounded by approved policy. |
+| Provenance and audit | Correlation, provider adapter/version, response classification, retry cause. |
+| Sensitivity | Sensitive internal; raw provider response and target excluded unless protected and approved. |
+| Retention status | Pending. |
+| Unresolved decisions | Retry policy, provider evidence, redaction, timeout, retention, final-status derivation. |
+
+#### Candidate: `scheduler_job_definition`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Represent logical scheduled work, enablement, timing rules, and ownership independently of scheduler technology. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Stable logical job name/version; not a runtime process identity. |
+| Important fields | job type, schedule rule, timezone, enabled state, version, concurrency/misfire policy references. |
+| Relationships | Parent of scheduler executions; may create notification intents or domain actions. |
+| Candidate constraints | Unique active logical identity; valid approved schedule/timezone; controlled enablement. |
+| Provenance and audit | Configuration actor/process, before/after, approval reference, effective time. |
+| Sensitivity | Operational internal. |
+| Retention status | Pending; configuration history must be auditable. |
+| Unresolved decisions | Scheduler owner/topology, locking, timing, misfire, overlap, configuration source. |
+
+#### Candidate: `scheduler_execution`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Record each due, started, skipped, completed, failed, retried, or recovered execution. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Logical job, scheduled occurrence, and execution attempt under an approved deterministic identity rule. |
+| Important fields | scheduled/start/end times, outcome, duration, duplicate-prevention result, retry/recovery state, safe error classification, correlation. |
+| Relationships | Job definition; caused domain actions and notification intents; audit evidence. |
+| Candidate constraints | Deterministic occurrence uniqueness after policy approval; bounded concurrent execution; controlled outcomes. |
+| Provenance and audit | Runtime/process reference, job version, cause, correlation, failure/recovery evidence. |
+| Sensitivity | Audit controlled. |
+| Retention status | Pending. |
+| Unresolved decisions | Single-execution mechanism, retries, recovery, retention, operational ownership. |
+
+### Audit and projections
+
+#### Candidate: `domain_audit_event`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Preserve durable, access-controlled evidence for significant domain actions and corrections. |
+| Authoritative owner | PM Assistant. |
+| Conceptual key | Immutable event identity plus domain/resource reference. |
+| Important fields | domain, event name, safe resource reference, actor/process, result, effective/recorded times, reason, correlation/causation, contract/rule/mapping versions, safe before/after evidence. |
+| Relationships | Controlled references to plans, identity decisions, imports, jobs, notifications, and other domain records. |
+| Candidate constraints | Event identity unique; required actor/process and times; append-oriented mutation rules; controlled domain/event vocabulary. |
+| Provenance and audit | The record is provenance; correction links preserve prior evidence. |
+| Sensitivity | Audit controlled. |
+| Retention status | Pending; access, immutability, privacy, deletion, and legal hold require approval. |
+| Unresolved decisions | Physical reference model, evidence shape, access, immutability, retention, privacy, archival. |
+
+#### Candidate: `read_projection_state`
+
+| Attribute | Specification |
+| --- | --- |
+| Purpose | Track generation, source, freshness, cursor/version, and health of approved read projections without exposing persistence internals. |
+| Authoritative owner | PM Assistant projection process. |
+| Conceptual key | Projection name and approved version. |
+| Important fields | source, `as_of`, generated time, stale state, build version, last successful position, safe failure classification. |
+| Relationships | Describes projection generation; does not grant AutoPM table access. |
+| Candidate constraints | Unique projection/version; ordered generation position where applicable; coarse safe failure data only. |
+| Provenance and audit | Process/version, source position, start/end/outcome, correlation. |
+| Sensitivity | Projection safe for specifically approved metadata fields; operational details remain internal. |
+| Retention status | Pending; operational history may differ from audit retention. |
+| Unresolved decisions | Projection mechanism, rebuild policy, lag thresholds, storage, cache, and recovery. |
+
+## Configuration and secrets
+
+The current `settings` table is implementation evidence. Phase 4.1 does not approve a target general-purpose settings table. Secrets and credentials must be held in an approved secret boundary, not documented or copied into audit, projections, examples, or general configuration records. Non-secret application settings require typed ownership, validation, audit, and environment-separation rules in a later design.
+
+## Cross-table rules
+
+- No table is an integration contract for AutoPM.
+- Public representations remain decoupled from physical schema and internal keys.
+- Foreign keys are candidates until legacy orphan profiling and migration sequencing prove them safe.
+- Historical snapshot fields coexist with reviewed master references when point-in-time meaning matters.
+- Source ownership outranks timestamps during conflicts.
+- Physical cascade behavior, partitioning, generated values, and vendor-specific constraints remain unresolved.
+
+## Related documents
+
+- [Schema Design](SCHEMA_DESIGN.md)
+- [Index Strategy](INDEX_STRATEGY.md)
+- [Migration Strategy](MIGRATION_STRATEGY.md)
+- [FleetOS Data Ownership](../DATA_OWNERSHIP.md)
+- [FleetOS Identity Contract](../IDENTITY_CONTRACT.md)

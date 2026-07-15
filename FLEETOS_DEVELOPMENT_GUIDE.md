@@ -170,3 +170,14 @@ FleetOS Engineering Standard v1.0:
 - [Non-functional requirements](docs/product/NON_FUNCTIONAL_REQUIREMENTS.md)
 - [User workflows and acceptance](docs/product/USER_WORKFLOWS_AND_ACCEPTANCE.md)
 - [v1 scope and release criteria](docs/product/V1_SCOPE_AND_RELEASE_CRITERIA.md)
+
+---
+
+## Database Documentation
+
+- [Database documentation index](docs/database/README.md)
+- [Database blueprint](docs/database/DATABASE_BLUEPRINT.md)
+- [Schema design](docs/database/SCHEMA_DESIGN.md)
+- [Table specification](docs/database/TABLE_SPECIFICATION.md)
+- [Index strategy](docs/database/INDEX_STRATEGY.md)
+- [Migration strategy](docs/database/MIGRATION_STRATEGY.md)
