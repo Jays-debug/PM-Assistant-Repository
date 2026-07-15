@@ -173,6 +173,15 @@ FleetOS Engineering Standard v1.0:
 
 ---
 
+## Database Documentation
+
+- [Database documentation index](docs/database/README.md)
+- [Database blueprint](docs/database/DATABASE_BLUEPRINT.md)
+- [Schema design](docs/database/SCHEMA_DESIGN.md)
+- [Table specification](docs/database/TABLE_SPECIFICATION.md)
+- [Index strategy](docs/database/INDEX_STRATEGY.md)
+- [Migration strategy](docs/database/MIGRATION_STRATEGY.md)
+
 ## FleetOS Domain Model v1.0
 
 - [Domain Model index](docs/domain/README.md)
