@@ -72,7 +72,7 @@ Repository evidence currently shows a static HTML/CSS/JavaScript-oriented AutoPM
 
 ## Repository technical debt
 
-At version 1.0, `PROJECT_CONTEXT.md`, `ROADMAP.md`, and `CHANGELOG.md` are empty directory placeholders. They contain no policy for this standard. They must not be modified, renamed, deleted, or treated as Markdown files without a separately approved task.
+`PROJECT_CONTEXT.md`, `ROADMAP.md`, and `CHANGELOG.md` are maintained repository-level documentation indexes. They summarize and link approved sources but do not replace this standard, accept proposed decisions, or authorize implementation. Changes to them still require the repository approval workflow and exact file-level scope.
 
 Known inconsistencies among existing ADR and API documents are escalation conditions. This standard does not silently correct or reinterpret them.
 

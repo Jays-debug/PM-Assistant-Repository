@@ -1,7 +1,7 @@
 # FleetOS Architecture
 
 ## Purpose
-This document defines the approved high-level architecture for **FleetOS — Fleet Operating System**.
+This document records the high-level architecture baseline for **FleetOS — Fleet Operating System**. Its architecture guardrails apply with the acceptance status of their controlling sources preserved; ADRs and contracts marked `Proposed` remain proposed until separately accepted.
 
 FleetOS is the parent platform for:
 - **AutoPM**

@@ -54,6 +54,8 @@ An **entity** has continuity that matters to the business even when its attribut
 
 ## Value-object catalog
 
+The canonical meanings of `VO-*` identifiers are defined in the [Canonical Domain Model](DOMAIN_MODEL.md). This catalog repeats selected labels only to show entity relationships and ownership; it does not create a second controlling definition.
+
 | ID | Value object | Required meaning or content |
 | --- | --- | --- |
 | `VO-001` | Transitional Vehicle Key | Original `vehicle_no`, normalized comparison value, normalization-rule version, source, and match classification. It is not a permanent identity. |

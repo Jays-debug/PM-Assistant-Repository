@@ -35,6 +35,15 @@ This documentation does not implement or authorize an API, authentication, autho
 
 ## Governing authority
 
+The API documentation uses this controlling-source relationship:
+
+| Subject | Controlling proposed source | Detailed elaboration |
+| --- | --- | --- |
+| Read-only boundary, `/api/v1`, endpoint inventory, response direction, and compatibility baseline | [FleetOS API Contract](../API_CONTRACT.md) | This API Blueprint and its resource/request/response documents |
+| Error envelope, HTTP/error-code meaning, correlation, and safe disclosure baseline | [FleetOS API Error Model](../API_ERROR_MODEL.md) | [Error, Pagination, and Filtering](ERROR_PAGINATION_AND_FILTERING.md) and validation documents |
+
+The root contract and error model remain `Proposed`. Detailed Blueprint material may specialize or identify gated candidates, but it must not silently replace, expand, or contradict a controlling root contract. Any conflict or expansion requires explicit approval.
+
 This Blueprint must be read with:
 
 - [FleetOS Development Guide](../../FLEETOS_DEVELOPMENT_GUIDE.md)
@@ -48,7 +57,7 @@ This Blueprint must be read with:
 - [FleetOS v1.0 Blueprint](../blueprint/FLEETOS_V1_BLUEPRINT.md)
 - [Canonical Domain Model](../domain/DOMAIN_MODEL.md)
 - [Database Blueprint](../database/DATABASE_BLUEPRINT.md)
-- [ADR registry](../adr/)
+- [ADR registry](../adr/README.md)
 
 When documents differ, their stated authority and approval status apply. This Blueprint does not silently resolve a conflict or promote a proposed decision. A conflict must be recorded in the decision register and escalated.
 

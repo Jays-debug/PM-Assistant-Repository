@@ -27,6 +27,8 @@ The review assesses the existing FleetOS documentation baseline before Phase 5 i
 | [Implementation Readiness Report](IMPLEMENTATION_READINESS_REPORT.md) | Phase 5 readiness checklist, blocking conditions, evidence gaps, risk assessment, and readiness verdict. |
 | [Unresolved Decisions Register](UNRESOLVED_DECISIONS_REGISTER.md) | Scope-qualified consolidation of existing unresolved decisions without resolving, renaming, or reassigning them. |
 | [Phase 5 Implementation Roadmap](PHASE5_IMPLEMENTATION_ROADMAP.md) | Recommended sequencing derived from the existing FleetOS roadmap, dependencies, gates, evidence, rollback boundaries, and stop conditions. |
+| [Document Status and Authority Register](DOCUMENT_STATUS_AND_AUTHORITY_REGISTER.md) | Per-document declared, inherited, or undetermined status metadata without promoting proposed material. |
+| [Phase 4.9.1 Repository Remediation Report](PHASE_4_9_1_REMEDIATION_REPORT.md) | Approved documentation repairs, validation evidence, residual gaps, and stop-before-commit record. |
 
 ## Sources reviewed
 

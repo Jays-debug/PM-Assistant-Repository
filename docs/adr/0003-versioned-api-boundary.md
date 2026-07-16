@@ -15,7 +15,7 @@ The existing application routes, database models, and AutoPM-derived statuses ar
 
 ## Decision
 
-FleetOS will introduce a proposed read-only HTTP boundary under `apiv1` through which AutoPM may consume approved maintenance information from PM Assistant.
+FleetOS will introduce a proposed read-only HTTP boundary under `/api/v1` through which AutoPM may consume approved maintenance information from PM Assistant.
 
 1. PM Assistant remains authoritative for PM plans, `pm_workflow_status`, `completion_status`, PM history, `notification_status`, and controlled import and synchronization audit.
 2. AutoPM remains a read-only consumer and does not gain maintenance workflow authority.
@@ -29,25 +29,25 @@ FleetOS will introduce a proposed read-only HTTP boundary under `apiv1` through 
 10. `fleetos_vehicle_id` remains a proposed future canonical identifier and must not be presented as implemented.
 11. The contract remains independent of database engine, hosting provider, and authentication implementation.
 
-Detailed endpoint and error behavior is specified in `docsAPI_CONTRACT.md` and `docsAPI_ERROR_MODEL.md`.
+Detailed endpoint and error behavior is specified in the proposed [FleetOS API Contract](../API_CONTRACT.md) and [FleetOS API Error Model](../API_ERROR_MODEL.md).
 
 ## Proposed boundary
 
 ```mermaid
 flowchart LR
-    A[AutoPM presentation] --GET apiv1 read models P[PM Assistant API boundary]
-    P -- M[Authoritative maintenance services]
-    M -- D[(Maintenance persistence)]
-    A -. direct database access prohibited .- D
+    A["AutoPM presentation"] -->|"GET /api/v1 read models"| P["PM Assistant API boundary"]
+    P --> M["Authoritative maintenance services"]
+    M --> D[("Maintenance persistence")]
+    A -. "direct database access prohibited" .-> D
 ```
 
 The diagram is logical and does not claim a deployed topology.
 
 ## Versioning decision
 
-The major API version appears in the path. Compatible v1 evolution may add endpoints, optional fields, optional filters, or error metadata. Removing or renaming fields; changing field types, nullability, identity meaning, enum semantics, status ownership, or default sorting; or otherwise changing established meaning requires `apiv2`.
+The major API version appears in the path. Compatible v1 evolution may add endpoints, optional fields, optional filters, or error metadata. Removing or renaming fields; changing field types, nullability, identity meaning, enum semantics, status ownership, or default sorting; or otherwise changing established meaning requires `/api/v2`.
 
-Existing unversioned `api...` endpoints remain internal or legacy until individually assessed. This ADR does not rename or remove them and does not declare them compatible with v1.
+Existing unversioned `/api/...` endpoints remain internal or legacy until individually assessed. This ADR does not rename or remove them and does not declare them compatible with v1.
 
 Deprecation requires a documented replacement, response deprecation metadata, an approved sunset date, a migration guide, and a consumer migration window. A 90-day minimum is proposed for later approval. An active version must not be retired while an approved AutoPM deployment depends on it without tested fallback and rollback evidence.
 
@@ -65,7 +65,7 @@ The versioned boundary prevents one generic `status` field from carrying unrelat
 
 The current PM Assistant behavior that derives `Overdue` in the plan status requires reconciliation with the proposed workflow vocabulary. The recommended direction is to retain workflow progression separately from a derived schedule condition. No source-code or data-model change is authorized by this ADR.
 
-Current AutoPM mileage thresholds and Thai labels remain observed behavior, not approved authoritative rules. PM Assistant may publish mileage status only after accepted input ownership, threshold behavior, resetcorrection policy, and rule version are approved.
+Current AutoPM mileage thresholds and Thai labels remain observed behavior, not approved authoritative rules. PM Assistant may publish mileage status only after accepted input ownership, threshold behavior, reset/correction policy, and rule version are approved.
 
 ## Security and operations assumptions
 
@@ -101,19 +101,19 @@ Current AutoPM mileage thresholds and Thai labels remain observed behavior, not 
 
 ## Risks and mitigations
 
- Risk  Mitigation 
-------
- Current local IDs are mistaken for canonical identities  Document them as opaque local resource IDs; do not fabricate `fleetos_vehicle_id`. 
- `vehicle_no` collision or reuse  Transitional use only; retain provenance; explicit ambiguity errors and quarantine. 
- Status domains overwrite one another  Publish four separately named fields and contract-test them. 
- Legacy `Overdue` changes workflow meaning  Approve a separate schedule-condition direction before implementation. 
- Mileage thresholds become authoritative accidentally  Require accepted input ownership and a versioned approved rule. 
- Naive timestamps cause ordering errors  Serialize only explicit RFC 3339 instants and resolve source timezone during ingestion. 
- Dashboard summaries duplicate or drift from business rules  Assign each metric definition and calculation version to the authoritative read model. 
- API failure makes AutoPM appear current  Include freshness and allow only a labeled last-known-good presentation cache. 
- Sensitive history or synchronization data leaks  Use dedicated projections, authorization scopes, and errorlog redaction. 
- Unversioned routes are treated as stable  Keep them outside the v1 guarantee until reviewed. 
- Consumer and provider deployments become coupled  Use compatibility tests, overlap versions, and a consumer feature flag or configuration switch. 
+| Risk | Mitigation |
+| --- | --- |
+| Current local IDs are mistaken for canonical identities | Document them as opaque local resource IDs; do not fabricate `fleetos_vehicle_id`. |
+| `vehicle_no` collision or reuse | Transitional use only; retain provenance; use explicit ambiguity errors and quarantine. |
+| Status domains overwrite one another | Publish four separately named fields and contract-test them. |
+| Legacy `Overdue` changes workflow meaning | Approve a separate schedule-condition direction before implementation. |
+| Mileage thresholds become authoritative accidentally | Require accepted input ownership and a versioned approved rule. |
+| Naive timestamps cause ordering errors | Serialize only explicit RFC 3339 instants and resolve source timezone during ingestion. |
+| Dashboard summaries duplicate or drift from business rules | Assign each metric definition and calculation version to the authoritative read model. |
+| API failure makes AutoPM appear current | Include freshness and allow only a labeled last-known-good presentation cache. |
+| Sensitive history or synchronization data leaks | Use dedicated projections, authorization scopes, and error/log redaction. |
+| Unversioned routes are treated as stable | Keep them outside the v1 guarantee until reviewed. |
+| Consumer and provider deployments become coupled | Use compatibility tests, overlapping versions, and a consumer feature flag or configuration switch. |
 
 ## Alternatives considered
 
@@ -167,7 +167,7 @@ For this documentation-only decision, rollback is limited to reverting the three
 
 This ADR may become Accepted when the Product Owner approves
 
-- the `apiv1` read-only direction and endpoint inventory;
+- the `/api/v1` read-only direction and endpoint inventory;
 - identity representation and transitional match behavior;
 - separate status vocabularies and mileage-rule gate;
 - authentication and authorization direction;

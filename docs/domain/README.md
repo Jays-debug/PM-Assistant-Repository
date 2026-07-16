@@ -30,6 +30,8 @@ When a target concept depends on an unresolved decision, the decision identifier
 - [Domain Events and Audit](DOMAIN_EVENTS_AND_AUDIT.md) — conceptual domain-event facts, event flow, lineage, and audit requirements.
 - [Domain Rules and Invariants](DOMAIN_RULES_AND_INVARIANTS.md) — business rules, invariants, conflict handling, idempotency, history preservation, and decision register.
 
+The [Canonical Domain Model](DOMAIN_MODEL.md) is the controlling definition source for `VO-*` meanings. The Entity Catalog is a discovery and relationship view; where it repeats `VO-008` through `VO-011`, it references rather than replaces the canonical definition.
+
 ## Identifier registry
 
 | Prefix | Element |
@@ -54,7 +56,7 @@ Apply this model with the status of its authoritative sources preserved:
 3. [Data Ownership](../DATA_OWNERSHIP.md)
 4. [Identity Contract](../IDENTITY_CONTRACT.md)
 5. [API Contract](../API_CONTRACT.md) and [API Error Model](../API_ERROR_MODEL.md)
-6. [Architecture decision records](../adr/)
+6. [Architecture decision records](../adr/README.md)
 7. [FleetOS v1.0 Blueprint](../blueprint/README.md)
 8. [FleetOS Product Specification v1.0](../product/README.md)
 9. [FleetOS Engineering Standard](../engineering/README.md)

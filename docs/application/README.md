@@ -34,6 +34,7 @@ Proposed, planned, unresolved, and target statements must not be interpreted as 
 | [State Management](STATE_MANAGEMENT.md) | Authoritative, presentation, cache, request, configuration, and operational state boundaries. |
 | [Application Deployment](APPLICATION_DEPLOYMENT.md) | Deployment units, configuration, startup, readiness, shutdown, rollout, and rollback direction. |
 | [Application Lifecycle](APPLICATION_LIFECYCLE.md) | Runtime lifecycle from initialization through operation, degradation, shutdown, and replacement. |
+| [Decision Traceability](DECISION_TRACEABILITY.md) | Existing application gates and headings mapped to existing scope-qualified decision registries. |
 
 ## Governing references
 
