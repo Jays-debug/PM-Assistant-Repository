@@ -191,3 +191,16 @@ FleetOS Engineering Standard v1.0:
 - [State and Lifecycle Model](docs/domain/STATE_AND_LIFECYCLE_MODEL.md)
 - [Domain Events and Audit](docs/domain/DOMAIN_EVENTS_AND_AUDIT.md)
 - [Domain Rules and Invariants](docs/domain/DOMAIN_RULES_AND_INVARIANTS.md)
+
+---
+
+## FleetOS Application Blueprint v1.0
+
+- [Application Blueprint index](docs/application/README.md)
+- [FleetOS Application Blueprint](docs/application/FLEETOS_APPLICATION_BLUEPRINT.md)
+- [Application Modules](docs/application/APPLICATION_MODULES.md)
+- [Service Interactions](docs/application/SERVICE_INTERACTIONS.md)
+- [Background Jobs](docs/application/BACKGROUND_JOBS.md)
+- [State Management](docs/application/STATE_MANAGEMENT.md)
+- [Application Deployment](docs/application/APPLICATION_DEPLOYMENT.md)
+- [Application Lifecycle](docs/application/APPLICATION_LIFECYCLE.md)
