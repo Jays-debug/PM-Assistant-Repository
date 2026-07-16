@@ -37,6 +37,7 @@ Proposed, planned, unresolved, and target statements must not be interpreted as 
 4. [Non-Functional Requirements](NON_FUNCTIONAL_REQUIREMENTS.md) — security, reliability, performance, data quality, usability, accessibility, observability, compatibility, and recovery direction.
 5. [User Workflows and Acceptance](USER_WORKFLOWS_AND_ACCEPTANCE.md) — critical workflows, exception paths, and acceptance criteria.
 6. [v1 Scope and Release Criteria](V1_SCOPE_AND_RELEASE_CRITERIA.md) — release boundaries, out-of-scope capabilities, decision gates, release evidence, and final completion criteria.
+7. [Requirements Traceability Matrix](REQUIREMENTS_TRACEABILITY_MATRIX.md) — identifier-level mapping from existing functional and non-functional requirements to existing acceptance and validation evidence, with unmapped gaps stated explicitly.
 
 ## Fixed product guardrails
 
@@ -61,10 +62,9 @@ This specification is read with, and does not replace:
 - [API Contract](../API_CONTRACT.md)
 - [API Error Model](../API_ERROR_MODEL.md)
 - [FleetOS v1.0 Blueprint](../blueprint/README.md)
-- [Architecture Decision Records](../adr/)
+- [Architecture Decision Records](../adr/README.md)
 - [FleetOS Engineering Standard](../engineering/README.md)
 - [FleetOS Development Guide](../../FLEETOS_DEVELOPMENT_GUIDE.md)
 - [Repository Governance](../../AGENTS.md)
 
 Where a referenced source is marked `Proposed` or Product Owner review, that decision retains the same status here. Conflicts or missing decisions are Product Owner gates; they must not be resolved through implementation guesswork.
-

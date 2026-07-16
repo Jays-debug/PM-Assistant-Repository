@@ -34,9 +34,11 @@ Application source code must never be modified before explicit human approval.
 - Preserve unrelated user changes.
 - Stop and request direction if repository instructions conflict or required context is unavailable.
 
-## Phase 2.0 scope
+## Historical Phase 2.0 scope
 
-Phase 2.0 is documentation and governance only. Its approved files are:
+The following scope records the historical Phase 2.0 approval. It is not the current repository phase index and does not authorize later changes by itself.
+
+Phase 2.0 was documentation and governance only. Its approved files were:
 
 - `README.md`
 - `AGENTS.md`
@@ -45,7 +47,7 @@ Phase 2.0 is documentation and governance only. Its approved files are:
 - `CHANGELOG.md`
 - `docs/PHASE_2_PLAN.md`
 
-The following remain out of scope for Phase 2.0:
+The following remained out of scope for Phase 2.0:
 
 - `autopm/**`
 - `pm-assistant/**`
@@ -54,3 +56,5 @@ The following remain out of scope for Phase 2.0:
 - Netlify configuration
 - Railway configuration
 - GitHub Actions
+
+Later work must use the mandatory approval workflow above and an exact task-specific file list. Current repository status and documentation navigation are maintained in `README.md`, `ROADMAP.md`, and `docs/README.md`.

@@ -26,6 +26,7 @@ Nothing labeled target, candidate, proposed, or future is operational merely bec
 - [Table Specification](TABLE_SPECIFICATION.md) — current implementation inventory and conceptual target table specifications.
 - [Index Strategy](INDEX_STRATEGY.md) — access-pattern-driven candidate indexes and validation requirements.
 - [Migration Strategy](MIGRATION_STRATEGY.md) — inventory, profiling, staged migration, reconciliation, cutover, and recovery gates.
+- [Decision Traceability](DECISION_TRACEABILITY.md) — mapping from existing database headings and conceptual-table gates to existing scope-qualified decision registries.
 
 ## Governing documents
 
