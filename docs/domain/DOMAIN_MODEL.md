@@ -38,6 +38,14 @@ The model describes business meaning, not physical storage. Mermaid diagrams in 
 | Configuration reference | A safe name/version reference to approved configuration used by a rule or process; never a secret value. |
 | Domain event | A conceptual fact that something business-significant occurred. It does not imply an event bus or integration message. |
 
+## Approved foundational value objects
+
+| ID | Value object | Canonical meaning and approved boundary |
+| --- | --- | --- |
+| `VO-020` | Original Vehicle Number | An immutable, raw source-preserved `vehicle_no` value. It contains non-empty text with at least one non-whitespace character and preserves leading/trailing whitespace, Unicode text and digits, punctuation, and separators exactly. Equality is exact value equality. It is not FleetOS Vehicle Identity, a normalization object, a match result, or proof that two records concern the same Vehicle. |
+
+`VO-020` was approved by the Product Owner for the Phase 5.2 domain foundation. It performs no normalization, matching, alias handling, reconciliation, or canonical-identity behavior. It may later supply only the original-value component of `VO-001`; `VO-001` itself remains unimplemented.
+
 ## Status vocabulary
 
 The following domains are independent:
