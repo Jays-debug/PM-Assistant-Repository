@@ -28,6 +28,7 @@ This document defines fixed domain direction, invariants that must remain true, 
 | `DR-018` | Audit is domain-appropriate, correlation-aware, version-aware, and secret-safe. | Fixed audit/security direction. |
 | `DR-019` | AutoPM fallback/cache remains labeled with source and age and is never reverse-synchronized to PM Assistant. | Fixed transitional and rollback rule. |
 | `DR-020` | Physical persistence, identifier type, ORM structure, migration framework, hosting, and runtime topology cannot change domain ownership. | Fixed technology-independent rule. |
+| `DR-021` | `VO-020` Original Vehicle Number preserves an accepted raw `vehicle_no` exactly and performs no normalization, matching, alias handling, reconciliation, or canonical-identity behavior. | Product Owner-approved Phase 5.2 foundation boundary. |
 
 ## Invariant catalog
 
@@ -59,6 +60,7 @@ This document defines fixed domain direction, invariants that must remain true, 
 | `INV-024` | Audit, errors, logs, history projections, and examples contain no secrets, raw credentials, unsafe targets, raw webhook payloads, or unnecessary sensitive content. |
 | `INV-025` | A correlation ID never serves as authentication, authorization, causation, ordering, or idempotency evidence. |
 | `INV-026` | A persistence, hosting, deployment, or database-engine change never transfers domain ownership. |
+| `INV-027` | `VO-020` rejects null, non-text, empty, and whitespace-only input; every accepted value remains unchanged, including leading/trailing whitespace, Unicode text and digits, punctuation, and separators, and compares by exact preserved value. |
 
 ## Conflict and reconciliation rules
 
@@ -108,6 +110,21 @@ The following are not sufficient idempotency identities without approval: correl
 10. Preserve reconciliation decisions and record supersession rather than destructive replacement.
 11. Preserve raw evidence through rollback while changing active mapping/calculation versions only under approved procedure.
 
+## Approved Product Owner decision dispositions
+
+### Phase 5.2 — Original Vehicle Number
+
+The Product Owner approved `VO-020` Original Vehicle Number as a narrowly scoped domain foundation:
+
+- it is an immutable, raw source-preserved textual value;
+- null, non-text, empty, and whitespace-only values are caller/input validation errors;
+- leading/trailing whitespace, Unicode text and digits, punctuation, and separators are preserved exactly;
+- equality uses exact Python string equality in the approved Python implementation;
+- invalid types use ordinary `TypeError`, and invalid empty/whitespace-only text uses ordinary `ValueError`;
+- it is not FleetOS Vehicle Identity, a normalization object, a matching object, an alias, or an Aggregate Root.
+
+This is a limited disposition only. `DEC-001` remains explicitly deferred. The normalization, change/reuse, registration, alias, ambiguity, and reconciliation subjects of `DEC-002` remain unresolved, but they do not block the approved raw-value-only `VO-020`. `DEC-004` is not applicable to `VO-020`. The broader Product Owner Vehicle identity gate remains unresolved.
+
 ## Deletion, cancellation, correction, and reopening direction
 
 - Cancellation is a business state/action, not physical deletion. It records reason, actor/process, time, previous state, and effects.
@@ -121,8 +138,8 @@ The following are not sufficient idempotency identities without approval: correl
 
 | ID | Decision required | Blocks or affects |
 | --- | --- | --- |
-| `DEC-001` | Enterprise Vehicle Master owner; `fleetos_vehicle_id` type, generator, uniqueness, storage, API representation, merge, split, retirement, and creation authority. | Canonical vehicle registry and identity lifecycle. |
-| `DEC-002` | `vehicle_no` change/reuse policy; normalization corpus; Thai/Arabic digit and punctuation handling; registration uniqueness, province, change, and reuse; alias approval. | Transitional reconciliation acceptance. |
+| `DEC-001` | Enterprise Vehicle Master owner; `fleetos_vehicle_id` type, generator, uniqueness, storage, API representation, merge, split, retirement, and creation authority. Phase 5.2 explicitly defers all of these subjects. | Canonical vehicle registry and identity lifecycle; does not block raw-value-only `VO-020`. |
+| `DEC-002` | `vehicle_no` change/reuse policy; normalization corpus; Thai/Arabic digit and punctuation handling; registration uniqueness, province, change, and reuse; alias approval. Phase 5.2 resolves none of these subjects. | Transitional reconciliation acceptance; does not block raw-value-only `VO-020`. |
 | `DEC-003` | Location owner; stable identity; creation, rename, merge, alias, retirement/deletion, and historical-name policy. | Location lifecycle and target identity. |
 | `DEC-004` | Fleet/business-unit/transport-type/PM-group semantics, owners, hierarchy, mapping, identity, effective dating, and assignment history. | Organizational grouping and KPI filtering. |
 | `DEC-005` | Identity provider; human/service identity; role vocabulary; permission matrix; person/team responsibility; provisioning, review, revocation, and emergency access. | Protected actions and actor interpretation. |

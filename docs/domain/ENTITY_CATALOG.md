@@ -77,6 +77,7 @@ The canonical meanings of `VO-*` identifiers are defined in the [Canonical Domai
 | `VO-017` | Rule/Contract/Mapping Version | Immutable safe identifier for the exact rule, interface contract, normalization, or mapping applied. |
 | `VO-018` | Freshness | Source, `as_of`, generated/received time, stale classification, and fallback/unavailable state where applicable. |
 | `VO-019` | Batch Outcome Counts | Received, accepted, rejected, ambiguous, conflicting, skipped, and other approved counts without concealing partial success. |
+| `VO-020` | Original Vehicle Number | Immutable, raw source-preserved `vehicle_no` text with exact value equality. Null, empty, and whitespace-only values are rejected; all accepted text is preserved without transformation. It is not Vehicle identity or normalization and may later provide only the original-value component of unimplemented `VO-001`. |
 
 ## Identity rules by entity
 
