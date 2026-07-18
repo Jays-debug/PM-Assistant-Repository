@@ -14,6 +14,7 @@ Documents marked `Proposed`, target, candidate, planned, review baseline, or unr
 
 - [Repository governance](../AGENTS.md)
 - [FleetOS Development Guide](../FLEETOS_DEVELOPMENT_GUIDE.md)
+- [FleetOS Implementation Guide](FLEETOS_IMPLEMENTATION_GUIDE.md)
 - [Project context](../PROJECT_CONTEXT.md)
 - [Repository roadmap](../ROADMAP.md)
 - [FleetOS Architecture](FLEETOS_ARCHITECTURE.md)

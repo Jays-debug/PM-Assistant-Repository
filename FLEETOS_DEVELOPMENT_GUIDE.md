@@ -105,6 +105,15 @@ ROADMAP.md
 - [API Error Model](docs/API_ERROR_MODEL.md)
 - [Architecture Decision Record index](docs/adr/README.md)
 
+## Implementation entry guide
+
+- [FleetOS Implementation Guide](docs/FLEETOS_IMPLEMENTATION_GUIDE.md)
+
+The implementation guide is a concise routing document subordinate to repository
+governance, accepted architecture decisions, controlling contracts, and the
+Engineering Standard. It does not authorize implementation or add an architecture
+layer.
+
 ## Engineering Standard
 
 - [Engineering Standard index](docs/engineering/README.md)

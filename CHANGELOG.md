@@ -2,6 +2,23 @@
 
 This changelog records repository-level FleetOS documentation maintenance. It is not an implementation, deployment, migration, or operational change record.
 
+## 2026-07-18 — Phase 5.0 FleetOS Implementation Foundation
+
+### Documentation foundation
+
+- added one concise FleetOS Implementation Guide as the implementation-entry map;
+- connected implementation planning to existing architecture-area indexes and Engineering Standards;
+- documented FleetOS-specific module, package, dependency, layer, naming, testing, migration, workflow, and checklist guardrails without duplicating the controlling standards;
+- preserved the status and authority of every referenced document through the Document Status and Authority Register;
+- retained the Phase 5 implementation-readiness verdict of **Hold**.
+
+### Explicit exclusions
+
+- no additional architecture layer or architecture redesign;
+- no acceptance of proposed ADRs, contracts, target designs, or unresolved decisions;
+- no FleetOS functionality, business logic, source package, API, database, test, migration, configuration, infrastructure, or deployment change;
+- no Git operations.
+
 ## 2026-07-17 — Phase 4.9.1 Repository Remediation
 
 ### Documentation maintenance
