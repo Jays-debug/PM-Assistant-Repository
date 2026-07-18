@@ -5,7 +5,7 @@
 This register makes document status and authority discoverable without changing the acceptance state of any architecture decision, contract, requirement, or implementation gate.
 
 - Status: Repository metadata register
-- Review date: 2026-07-17
+- Review date: 2026-07-18
 - Implementation authorization: None
 
 ## Status meanings
@@ -31,6 +31,7 @@ This register makes document status and authority discoverable without changing 
 | File | Status and authority |
 | --- | --- |
 | `docs/README.md` | Documentation index only. |
+| `docs/FLEETOS_IMPLEMENTATION_GUIDE.md` | Phase 5.0 documentation-only implementation-entry map. It is subordinate to repository governance, accepted decisions, controlling contracts, and the Engineering Standard; it adds no architecture authority and authorizes no implementation. |
 | `docs/FLEETOS_ARCHITECTURE.md` | High-level architecture baseline; controlling proposed ADR and contract statuses are preserved. |
 | `docs/DATA_OWNERSHIP.md` | Architecture ownership contract containing approved principles and explicit unresolved ownership areas. |
 | `docs/IDENTITY_CONTRACT.md` | Identity contract with transitional and proposed identity direction; unresolved lifecycle decisions remain unresolved. |

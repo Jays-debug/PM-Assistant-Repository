@@ -6,6 +6,7 @@ This file is the repository-level roadmap index. It links the existing approved 
 
 - Current repository maintenance phase: **Phase 4.9.1 — Repository Remediation**
 - Phase 5 implementation readiness: **Hold**
+- Current documentation phase: **Phase 5.0 — FleetOS Implementation Foundation**
 - Decision owner: FleetOS Product Owner
 
 ## Documentation history and direction
@@ -18,6 +19,7 @@ This file is the repository-level roadmap index. It links the existing approved 
 | Product and architecture areas | [Documentation index](docs/README.md) | Documentation baseline through Phase 4.8 |
 | Phase 4.9 | [Enterprise Architecture Review](docs/review/README.md) | Review complete |
 | Phase 4.9.1 | [Repository Remediation Report](docs/review/PHASE_4_9_1_REMEDIATION_REPORT.md) | Documentation maintenance |
+| Phase 5.0 | [FleetOS Implementation Guide](docs/FLEETOS_IMPLEMENTATION_GUIDE.md) | Documentation foundation only; no implementation authorization |
 | Phase 5 | [Recommended Phase 5 Implementation Roadmap](docs/review/PHASE5_IMPLEMENTATION_ROADMAP.md) | Recommendation only; implementation not authorized |
 
 ## Phase 5 entry conditions
