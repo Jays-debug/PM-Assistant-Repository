@@ -19,6 +19,17 @@ Cross-aggregate references use stable domain references only after their identit
 
 The aggregate does not imply that FleetOS v1.0 implements an enterprise Vehicle Master. `fleetos_vehicle_id` remains future and unimplemented.
 
+#### Phase 5.3 implemented subset
+
+The first approved implementation is intentionally narrower than complete `AGG-001`. Its root is `ENT-001` Vehicle with only:
+
+- immutable PM Assistant-local `local_vehicle_id` identity;
+- one immutable `VO-020` Original Vehicle Number.
+
+It may represent an existing PM Assistant-local Vehicle, expose those two values, and compare Vehicle entity identity using only `local_vehicle_id`. It has no mutation behavior. Equal Original Vehicle Number values never establish Vehicle identity.
+
+This subset excludes `VO-001`, `ENT-002`, `ENT-004`, `ENT-019`, normalization, matching, aliases, grouping, reconciliation, lifecycle operations, events, repositories, persistence, APIs, and application services. The full `AGG-001` blocking decisions remain unresolved. The current implementation may obtain `local_vehicle_id` from the existing local Vehicle record identifier, but the aggregate contract is storage-agnostic.
+
 ### `AGG-002` — Location Directory
 
 - Root: `ENT-005` Location.
