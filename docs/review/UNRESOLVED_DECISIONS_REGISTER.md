@@ -42,6 +42,12 @@ The Product Owner approved a minimal PM Assistant-local implementation of `ENT-0
 
 This limited aggregate performs no mutation, normalization, matching, alias handling, grouping, reconciliation, lifecycle, event, repository, persistence, API, application-service, or AutoPM behavior. `domain:DEC-001` remains unresolved for enterprise ownership, canonical identity, `fleetos_vehicle_id`, creation authority, merge, split, retirement, and lifecycle. `domain:DEC-002` and `domain:DEC-004` remain fully unresolved and outside the approved subset. API and backend Vehicle-identity decisions remain unresolved. The unresolved-decision counts above are unchanged.
 
+### Phase 5.4 — Existing Vehicle Local-Identity Query
+
+The Product Owner approved one PM Assistant-internal, read-only application query that retrieves an existing Phase 5.3 Vehicle by immutable `local_vehicle_id` and returns only `local_vehicle_id` plus the exact raw `original_vehicle_number`. The query may depend on a narrow inward application read port and must distinguish invalid local identity, missing Vehicle, and unavailable read dependency without defining public API behavior.
+
+The inward port is named `ExistingVehicleReadPort`: `Existing` excludes creation and lifecycle authority, and `ReadPort` makes its read-only application-boundary role explicit. This approval adds no list operation, Vehicle Number lookup, normalization, matching, aliases, grouping, reconciliation, command, mutation, event, repository implementation, persistence adapter, ORM mapping, API, presentation behavior, AutoPM behavior, or dependency. It does not resolve `domain:DEC-001`, `domain:DEC-002`, `domain:DEC-004`, or any API or backend Vehicle-identity decision. The unresolved-decision counts above are unchanged.
+
 ## Consolidated decision themes
 
 The following table groups related source decisions for review only. A theme does not replace or collapse its source decisions.
