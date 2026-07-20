@@ -36,6 +36,12 @@ The Product Owner approved `VO-020` Original Vehicle Number as an immutable, raw
 
 This limited approval does not implement or resolve normalization, matching, aliases, reconciliation, `fleetos_vehicle_id`, Vehicle lifecycle, or a Vehicle Aggregate Root. `domain:DEC-001` remains deferred. `domain:DEC-002` remains unresolved for every subject listed in its source, but those subjects do not block raw-value-only `VO-020`. `domain:DEC-004` is not applicable. API and backend Vehicle-identity decisions remain unresolved. The unresolved-decision counts above are therefore unchanged.
 
+### Phase 5.3 — Minimal Vehicle Aggregate
+
+The Product Owner approved a minimal PM Assistant-local implementation of `ENT-001` Vehicle. It has immutable positive-integer `local_vehicle_id` identity, contains exactly one `VO-020` Original Vehicle Number, and uses only `local_vehicle_id` for entity equality. `local_vehicle_id` is storage-agnostic domain terminology and has no enterprise, cross-system, canonical, or public API identity meaning. The current implementation may be backed by the existing `vehicle_master.id`, but that storage detail does not enter the domain model or behavior.
+
+This limited aggregate performs no mutation, normalization, matching, alias handling, grouping, reconciliation, lifecycle, event, repository, persistence, API, application-service, or AutoPM behavior. `domain:DEC-001` remains unresolved for enterprise ownership, canonical identity, `fleetos_vehicle_id`, creation authority, merge, split, retirement, and lifecycle. `domain:DEC-002` and `domain:DEC-004` remain fully unresolved and outside the approved subset. API and backend Vehicle-identity decisions remain unresolved. The unresolved-decision counts above are unchanged.
+
 ## Consolidated decision themes
 
 The following table groups related source decisions for review only. A theme does not replace or collapse its source decisions.
@@ -65,8 +71,8 @@ Source: `docs/domain/DOMAIN_RULES_AND_INVARIANTS.md`
 
 | Qualified ID | Existing unresolved subject | Affected implementation |
 | --- | --- | --- |
-| `domain:DEC-001` | Enterprise Vehicle Master owner and `fleetos_vehicle_id` type, generation, uniqueness, storage, API representation, merge, split, retirement, and creation authority; explicitly deferred by the Phase 5.2 limited disposition | Canonical vehicle identity; does not block raw-value-only `VO-020` |
-| `domain:DEC-002` | `vehicle_no` change/reuse, normalization corpus, digit/punctuation handling, registration uniqueness/reuse, and alias approval; all remain unresolved after the Phase 5.2 limited disposition | Transitional reconciliation; does not block raw-value-only `VO-020` |
+| `domain:DEC-001` | Enterprise Vehicle Master owner and `fleetos_vehicle_id` type, generation, uniqueness, storage, API representation, merge, split, retirement, and creation authority; Phases 5.2 and 5.3 leave these subjects unresolved while Phase 5.3 permits only PM Assistant-local `local_vehicle_id` | Canonical vehicle identity; does not block raw-value-only `VO-020` or the limited minimal Vehicle Aggregate |
+| `domain:DEC-002` | `vehicle_no` change/reuse, normalization corpus, digit/punctuation handling, registration uniqueness/reuse, and alias approval; all remain unresolved after Phases 5.2 and 5.3 | Transitional reconciliation; excluded from the limited minimal Vehicle Aggregate |
 | `domain:DEC-003` | Location owner, stable identity, create/rename/merge/alias/retire/delete, and historical-name policy | Location lifecycle |
 | `domain:DEC-004` | Fleet, business-unit, transport-type, PM-group semantics, ownership, hierarchy, mapping, identity, and effective dating | Grouping and KPI filters |
 | `domain:DEC-005` | Identity provider, human/service identity, roles, permissions, responsibility, provisioning, review, revocation, and emergency access | Protected actions and actor meaning |

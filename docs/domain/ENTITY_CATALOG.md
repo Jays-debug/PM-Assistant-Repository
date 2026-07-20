@@ -12,7 +12,7 @@ An **entity** has continuity that matters to the business even when its attribut
 
 | ID | Entity | Meaning and identity direction | Owner and state |
 | --- | --- | --- | --- |
-| `ENT-001` | Vehicle | The maintenance subject. During transition it is referenced by provenance-rich `VO-001`; no canonical v1 enterprise identifier may be fabricated. | Enterprise owner unresolved (`DEC-001`). PM Assistant publishes a transitional representation. |
+| `ENT-001` | Vehicle | The maintenance subject. Its Phase 5.3 minimum PM Assistant implementation has immutable `local_vehicle_id` identity and one `VO-020`; future cross-system transition remains through provenance-rich `VO-001`, and no canonical v1 enterprise identifier may be fabricated. | PM Assistant-local representation approved; enterprise owner remains unresolved (`DEC-001`). |
 | `ENT-002` | Vehicle Alias/Registration Record | A historically meaningful, namespaced vehicle reference such as registration, vehicle code, or historical vehicle number. It preserves source and effective-period evidence. | Lifecycle and uniqueness depend on `DEC-001` and `DEC-002`. |
 | `ENT-003` | Fleet or Business Grouping | A conceptual organizational grouping distinct from transport type, PM group, responsibility, or display label unless approved mappings say otherwise. | Owner, hierarchy, and stable identity unresolved (`DEC-004`). |
 | `ENT-004` | Vehicle Grouping Assignment | The association of a vehicle to an approved grouping for an effective period, preserving prior assignments and mapping provenance. | Target direction; semantics depend on `DEC-004`. |
@@ -83,7 +83,7 @@ The canonical meanings of `VO-*` identifiers are defined in the [Canonical Domai
 
 | Entity | Current evidence | Transitional reference | Target direction | Prohibited interpretation |
 | --- | --- | --- | --- | --- |
-| `ENT-001` Vehicle | Sheet index/fields and local `vehicle_master.id`. | `VO-001` using only approved `vehicle_no` normalization. | Provenance-rich v1 representation; future canonical registry outside v1. | Local ID, row index, registration, code, or timestamp as automatic shared identity. |
+| `ENT-001` Vehicle | Sheet index/fields and local `vehicle_master.id`; the latter currently backs storage-agnostic `local_vehicle_id`. | Phase 5.3 aggregate identity is PM Assistant-local only; future cross-system references use `VO-001` under approved normalization. | Provenance-rich v1 representation; future canonical registry outside v1. | `local_vehicle_id`, local backing ID, row index, registration, code, vehicle number, or timestamp as automatic shared identity. |
 | `ENT-005` Location | Local integer ID and unique name; plan text. | Exact canonical name or approved alias plus preserved snapshot. | Stable representation after `DEC-003`. | Similar/translated name as automatic equality. |
 | `ENT-006` PM Plan | PM Assistant local integer ID. | Opaque local resource reference. | Stable external identity only after `DEC-015`; recurring identity after `DEC-008`. | Database key format as domain or API commitment. |
 | `ENT-009` Mileage Reading | No observed PM Assistant entity. | Safe source reference plus vehicle/time evidence; collision policy unresolved. | Stable accepted-record reference after `DEC-009`. | Vehicle plus timestamp assumed unique without approval. |
@@ -116,6 +116,7 @@ The canonical meanings of `VO-*` identifiers are defined in the [Canonical Domai
 The following similarities are evidence only:
 
 - `VehicleMaster` resembles parts of `ENT-001` but does not establish enterprise ownership or identity.
+- Phase 5.3 permits its existing local identifier to back `local_vehicle_id` only inside PM Assistant; this does not promote its storage name or representation into domain terminology.
 - `Location` resembles parts of `ENT-005` but its integer ID is not a FleetOS identity.
 - `PMPlan` resembles `ENT-006` but its generic `status` combines or derives meanings the target model separates.
 - `PMHistory` resembles `ENT-008`, but safe projection, retention, and correction policy remain unresolved.
