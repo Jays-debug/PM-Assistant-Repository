@@ -1,9 +1,11 @@
 """Verify the focused FastAPI boundary for the existing-Vehicle read slice."""
 
 import asyncio
+import builtins
 import json
 import unittest
 from dataclasses import dataclass
+from unittest.mock import patch
 from urllib.parse import quote
 
 from fastapi import FastAPI
@@ -14,6 +16,7 @@ from app.application.get_existing_vehicle import (
     VehicleNotFoundError,
     VehicleReadUnavailableError,
 )
+import app.presentation.vehicle_read as vehicle_read_presentation
 from app.presentation.vehicle_read import (
     provide_get_existing_vehicle_handler,
     router,
@@ -116,7 +119,7 @@ class ExistingVehicleReadApiTests(unittest.TestCase):
         return asyncio.run(request())
 
     def test_returns_only_approved_fields_and_preserves_raw_number(self) -> None:
-        raw_number = "  ทะเบียน-๐๑ / A  "
+        raw_number = " \tทะเบียน-๐๑ / A\n "
         handler = StubExistingVehicleHandler(
             ExistingVehicleDetails(
                 local_vehicle_id=7,
@@ -207,13 +210,54 @@ class ExistingVehicleReadApiTests(unittest.TestCase):
                 )
 
                 self.assertEqual(response.status_code, 400)
-                self.assertEqual(response.json()["detail"]["code"], "INVALID_REQUEST")
+                self.assertEqual(
+                    response.json(),
+                    {
+                        "detail": {
+                            "code": "INVALID_REQUEST",
+                            "message": "local_vehicle_id must be a positive integer.",
+                            "details": [
+                                {
+                                    "field": "local_vehicle_id",
+                                    "reason": "must_be_positive_integer",
+                                }
+                            ],
+                            "retryable": False,
+                        }
+                    },
+                )
                 self.assertIsNone(handler.received_query)
 
-    def test_openapi_exposes_get_route_and_only_approved_response_fields(self) -> None:
+    def test_dependency_override_does_not_load_composition_or_infrastructure(
+        self,
+    ) -> None:
+        self.assertNotIn("composition", vars(vehicle_read_presentation))
+        handler = StubExistingVehicleHandler(ExistingVehicleDetails(7, "VH-007"))
+        original_import = builtins.__import__
+
+        def reject_outward_imports(name: str, *args: object, **kwargs: object) -> object:
+            if name == "composition" or name.startswith("app.infrastructure"):
+                raise AssertionError(f"Unexpected outward import: {name}")
+            return original_import(name, *args, **kwargs)
+
+        with patch("builtins.__import__", side_effect=reject_outward_imports):
+            response = self._request_with(handler, "/api/vehicles/7")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(handler.received_query.local_vehicle_id, 7)
+
+    def test_openapi_documents_the_complete_vehicle_read_contract(self) -> None:
         document = self.app.openapi()
 
         operation = document["paths"]["/api/vehicles/{local_vehicle_id}"]["get"]
+        self.assertNotIn("requestBody", operation)
+        self.assertEqual(len(operation["parameters"]), 1)
+        path_parameter = operation["parameters"][0]
+        self.assertEqual(path_parameter["name"], "local_vehicle_id")
+        self.assertEqual(path_parameter["in"], "path")
+        self.assertIs(path_parameter["required"], True)
+        self.assertEqual(path_parameter["schema"]["type"], "string")
+
         response_schema = operation["responses"]["200"]["content"][
             "application/json"
         ]["schema"]
@@ -226,6 +270,55 @@ class ExistingVehicleReadApiTests(unittest.TestCase):
             set(response_properties),
             {"local_vehicle_id", "original_vehicle_number"},
         )
+
+        expected_error_schemas = {
+            "400": (
+                "InvalidRequestResponse",
+                {"code", "message", "details", "retryable"},
+            ),
+            "404": (
+                "VehicleNotFoundResponse",
+                {"code", "message", "retryable"},
+            ),
+            "503": (
+                "DependencyUnavailableResponse",
+                {"code", "message", "retryable"},
+            ),
+        }
+        for status_code, (
+            expected_schema_name,
+            expected_detail_properties,
+        ) in expected_error_schemas.items():
+            with self.subTest(status_code=status_code):
+                error_schema = operation["responses"][status_code]["content"][
+                    "application/json"
+                ]["schema"]
+                self.assertEqual(
+                    error_schema["$ref"],
+                    f"#/components/schemas/{expected_schema_name}",
+                )
+                self.assertEqual(
+                    set(
+                        document["components"]["schemas"][expected_schema_name][
+                            "properties"
+                        ]
+                    ),
+                    {"detail"},
+                )
+                detail_reference = document["components"]["schemas"][
+                    expected_schema_name
+                ]["properties"]["detail"]["$ref"]
+                detail_schema_name = detail_reference.rsplit("/", 1)[-1]
+                self.assertEqual(
+                    set(
+                        document["components"]["schemas"][detail_schema_name][
+                            "properties"
+                        ]
+                    ),
+                    expected_detail_properties,
+                )
+
+        self.assertIn("422", operation["responses"])
 
 
 if __name__ == "__main__":
