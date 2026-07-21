@@ -12,6 +12,9 @@ Approved principles:
 - Google Sheets and `Data Car.csv` are transitional upstream sources only. They are not authoritative for completion, maintenance history, or notification delivery.
 - `vehicle_no` is a transitional matching key, not a permanently immutable enterprise identifier.
 - Vehicle Master enterprise ownership, location identity, and current odometer source ownership remain unresolved.
+- PM Assistant is authorized by ADR-0004 to create a Vehicle reference for its
+  own local maintenance use. This does not establish enterprise Vehicle Master
+  ownership.
 
 ## State model
 
@@ -42,7 +45,7 @@ Approved principles:
 
 | Domain | Current observed source | Transitional rule | Target authoritative owner | Create | Update | Read | Identifier / candidate | Conflict and synchronization rule | Audit requirement | Unresolved decisions |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Vehicle identity | AutoPM has sheet row index, `vehicle_no`, and registration. PM Assistant has local `vehicle_master.id`, unique `vehicle_no`, vehicle code, and weekly-control registration. | Match by normalized `vehicle_no` only. Preserve registrations and vehicle codes as attributes/aliases. Quarantine ambiguous matches. | Proposed FleetOS vehicle registry; enterprise owner pending. | Controlled registry/import process after approval. | Controlled registry process after approval. | AutoPM and PM Assistant. | Transitional: `vehicle_no`. Future reserved candidate: `fleetos_vehicle_id` (not implemented). | Upstream to reconciliation; registry/read model to consumers. Ownership outranks timestamp. No automatic merges. | Source value, normalized value, match decision, aliases, actor/batch, timestamps, merge/split history. | Enterprise Vehicle Master owner; creation authority; lifecycle and reuse policy. |
+| Vehicle identity | AutoPM has sheet row index, `vehicle_no`, and registration. PM Assistant has local `vehicle_master.id`, currently constrained `vehicle_no`, vehicle code, and weekly-control registration. | Match by normalized `vehicle_no` only. Preserve registrations and vehicle codes as attributes/aliases. Quarantine ambiguous matches. | Proposed FleetOS vehicle registry; enterprise owner pending. | PM Assistant may create a local maintenance Vehicle reference under ADR-0004; enterprise registry creation remains pending. | Not authorized for the minimal local Vehicle. | AutoPM and PM Assistant. | PM Assistant-local: persistence-generated `local_vehicle_id`, never caller supplied. Transitional: `vehicle_no`. Future reserved candidate: `fleetos_vehicle_id` (not implemented). | Upstream to reconciliation; registry/read model to consumers. Ownership outranks timestamp. No automatic merges. Exact Original Vehicle Number uniqueness remains pending. | Successful local Vehicle creation must be auditable; audit content and implementation remain deferred. | Enterprise Vehicle Master owner; Original Vehicle Number uniqueness; lifecycle and reuse policy. |
 | Vehicle master attributes | Sheet supplies registration, model, vehicle type, fleet, business type and other fields. PM Assistant vehicle master/Data Car supplies code, transport type, model, fleet and vehicle type. | Preserve provenance per field; do not blanket-overwrite conflicting records. | Proposed FleetOS registry direction; final enterprise owner pending. | Approved registry owner or controlled import. | Approved registry owner or controlled import. | Both systems. | Vehicle identity reference; no separate durable attribute identifier. | Field-level reconciliation. Approved value is published to AutoPM; conflicting imports are exceptions. | Before/after, source, batch, reviewer, effective time. | Owners of registration, model year, PM interval, fleet, and business type. |
 | Fleet and business-unit grouping | AutoPM uses sheet fleet fields and column AK for business type. PM Assistant stores free-text fleet/transport type. No grouping master observed. | Preserve exact labels plus reviewed mappings. Do not silently merge Thai/English variants. | FleetOS grouping registry direction; owner pending. | Approved master owner/import. | Approved master owner/import. | Both systems. | No supported stable ID; current names are labels only. | Mapping is explicit and effective-dated. Target mapping/read model flows to AutoPM. | Mapping version, previous/new group, effective dates, affected vehicles. | Corporate source, hierarchy, whether transport type equals business unit, assignment history. |
 | Location identity | PM Assistant has local integer ID and unique name; plans store location as text. | Exact-name matching only unless an approved alias exists. Renames must not silently detach history. | Unresolved; proposed future stable FleetOS location identity. | PM Assistant or approved location-master import during transition. | PM Assistant or approved location-master import during transition. | Both as required. | Local PM Assistant ID is not yet a shared ID; canonical name is a risky candidate. Future stable ID pending. | PM Assistant publishes approved location representation. Ambiguities are quarantined. | Create/update/rename/merge, aliases, affected records, source and actor. | Stable ID, enterprise owner, rename/merge and historical-name policy. |
@@ -90,6 +93,9 @@ Approved principles:
 
 ## Audit rules
 
+- Successful PM Assistant-local Vehicle creation must be auditable. This
+  document does not select audit fields, persistence shape, access, retention,
+  or storage implementation.
 - Every controlled import or synchronization run must have a traceable batch record.
 - Identity decisions require original and normalized values, source, decision, reviewer/actor and timestamp.
 - Workflow status, completion, history, notification and accepted-mileage changes require correlation to their initiating action.
@@ -110,6 +116,9 @@ Approved principles:
 ## Unresolved decisions
 
 - Enterprise Vehicle Master owner and `fleetos_vehicle_id` creation/lifecycle authority.
+- Exact Original Vehicle Number duplicate and uniqueness policy for PM
+  Assistant-local Vehicle creation.
+- Minimum Vehicle-creation audit content, persistence shape, access, and retention.
 - Fleet/business-unit hierarchy and grouping master owner.
 - Stable location identifier, owner, rename, merge and history rules.
 - Odometer producer, source priority, reset/replacement and duplicate-reading policy.
@@ -118,4 +127,3 @@ Approved principles:
 - Stable external PM plan/event identifiers and idempotency format.
 - Import atomicity, retention, checksum and replay policy.
 - Audit retention and deletion/privacy policy.
-

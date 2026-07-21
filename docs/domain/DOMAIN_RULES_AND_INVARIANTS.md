@@ -30,6 +30,9 @@ This document defines fixed domain direction, invariants that must remain true, 
 | `DR-020` | Physical persistence, identifier type, ORM structure, migration framework, hosting, and runtime topology cannot change domain ownership. | Fixed technology-independent rule. |
 | `DR-021` | `VO-020` Original Vehicle Number preserves an accepted raw `vehicle_no` exactly and performs no normalization, matching, alias handling, reconciliation, or canonical-identity behavior. | Product Owner-approved Phase 5.2 foundation boundary. |
 | `DR-022` | The Phase 5.3 minimal Vehicle Aggregate uses immutable `local_vehicle_id` solely for PM Assistant-local entity continuity and contains one `VO-020`; it performs no mutation, matching, normalization, alias, grouping, reconciliation, lifecycle, event, repository, or persistence behavior. | Product Owner-approved limited aggregate boundary; the remainder of `AGG-001` stays decision-dependent. |
+| `DR-023` | PM Assistant may create a Vehicle reference solely for its own local maintenance use; this does not establish enterprise Vehicle Master ownership. | Product Owner-approved Phase 6.3 limited write authority under ADR-0004. |
+| `DR-024` | Persistence generates `local_vehicle_id` inside the application-owned creation transaction; callers and the aggregate do not generate or select it. | Product Owner-approved Phase 6.3 identity-generation boundary. |
+| `DR-025` | Successful PM Assistant-local Vehicle creation must be auditable without Phase 6.3 selecting audit content, persistence shape, access, retention, or storage. | Auditability fixed; implementation decisions remain deferred. |
 
 ## Invariant catalog
 
@@ -67,6 +70,12 @@ This document defines fixed domain direction, invariants that must remain true, 
 | `INV-030` | A minimal Vehicle Aggregate contains exactly one `VO-020` Original Vehicle Number and rejects a raw string or any other substitute for that value object. |
 | `INV-031` | Vehicle entity equality uses only `local_vehicle_id`; equal or unequal Original Vehicle Number values do not determine Vehicle identity. |
 | `INV-032` | The Phase 5.3 minimal Vehicle Aggregate cannot mutate identity or source evidence and cannot create aliases, group assignments, matches, reconciliation decisions, lifecycle facts, or domain events. |
+| `INV-033` | PM Assistant-local Vehicle creation never establishes enterprise Vehicle Master ownership or a FleetOS-wide identity. |
+| `INV-034` | A creation caller cannot supply or select `local_vehicle_id`; the aggregate does not generate it. |
+| `INV-035` | An allocated `local_vehicle_id` is not a successful creation result until the application-owned transaction commits successfully. |
+| `INV-036` | Gaps or ordering in persistence-generated local identifiers have no domain meaning and do not permit identity reuse or inference. |
+| `INV-037` | Current persistence uniqueness cannot become an Original Vehicle Number business invariant without explicit Product Owner approval. |
+| `INV-038` | Phase 6.3 local creation authority does not authorize update, deletion, lifecycle, matching, normalization, aliases, grouping, reconciliation, domain events, APIs, or AutoPM writes. |
 
 ## Conflict and reconciliation rules
 
@@ -145,6 +154,25 @@ The Product Owner approved a minimal PM Assistant-local implementation of `ENT-0
 
 The current implementation may be backed by the existing `vehicle_master.id`, but that storage detail does not enter class names, field names, invariants, or domain behavior. This limited disposition does not resolve enterprise ownership or canonical identity under `DEC-001`; normalization, number change/reuse, registration, matching, aliases, ambiguity, and reconciliation under `DEC-002`; or grouping semantics and assignments under `DEC-004`. It does not authorize `VO-001`, `fleetos_vehicle_id`, domain events, repositories, persistence work, APIs, application services, or AutoPM changes.
 
+### Phase 6.3 — PM Assistant-local Vehicle creation authority
+
+The Product Owner accepted ADR-0004 as a limited disposition:
+
+- PM Assistant may create a Vehicle reference for its own local maintenance use;
+- this authority does not establish enterprise Vehicle Master ownership;
+- persistence generates `local_vehicle_id` inside the application-owned
+  transaction;
+- callers cannot supply or select `local_vehicle_id`;
+- successful local creation must be auditable, with audit content and
+  implementation deferred;
+- update, delete, lifecycle, API, AutoPM, normalization, matching, alias,
+  grouping, reconciliation, event, and migration authority remains excluded.
+
+Exact Original Vehicle Number duplicate and uniqueness behavior remains a
+pending Product Owner decision. The current persistence constraint is not
+promoted into a domain invariant. The broader subjects in `DEC-001`, `DEC-002`,
+`DEC-014`, and `DEC-015` remain unresolved outside this limited disposition.
+
 ## Deletion, cancellation, correction, and reopening direction
 
 - Cancellation is a business state/action, not physical deletion. It records reason, actor/process, time, previous state, and effects.
@@ -158,8 +186,8 @@ The current implementation may be backed by the existing `vehicle_master.id`, bu
 
 | ID | Decision required | Blocks or affects |
 | --- | --- | --- |
-| `DEC-001` | Enterprise Vehicle Master owner; `fleetos_vehicle_id` type, generator, uniqueness, storage, API representation, merge, split, retirement, and creation authority. Phases 5.2 and 5.3 do not resolve these subjects; Phase 5.3 approves only PM Assistant-local `local_vehicle_id`. | Canonical vehicle registry and identity lifecycle; does not block raw-value-only `VO-020` or the limited minimal Vehicle Aggregate. |
-| `DEC-002` | `vehicle_no` change/reuse policy; normalization corpus; Thai/Arabic digit and punctuation handling; registration uniqueness, province, change, and reuse; alias approval. Phases 5.2 and 5.3 resolve none of these subjects. | Transitional reconciliation acceptance; excluded from the limited minimal Vehicle Aggregate. |
+| `DEC-001` | Enterprise Vehicle Master owner; `fleetos_vehicle_id` type, generator, uniqueness, storage, API representation, merge, split, retirement, and enterprise creation authority. Phase 6.3 resolves only PM Assistant-local reference creation and persistence generation of `local_vehicle_id`. | Canonical vehicle registry and identity lifecycle; does not block the approved local creation authority. |
+| `DEC-002` | Exact Original Vehicle Number duplicate/uniqueness policy for local creation; `vehicle_no` change/reuse policy; normalization corpus; Thai/Arabic digit and punctuation handling; registration uniqueness, province, change, and reuse; alias approval. | Blocks a complete local create contract and transitional reconciliation acceptance; excluded from the aggregate invariant set. |
 | `DEC-003` | Location owner; stable identity; creation, rename, merge, alias, retirement/deletion, and historical-name policy. | Location lifecycle and target identity. |
 | `DEC-004` | Fleet/business-unit/transport-type/PM-group semantics, owners, hierarchy, mapping, identity, effective dating, and assignment history. | Organizational grouping and KPI filtering. |
 | `DEC-005` | Identity provider; human/service identity; role vocabulary; permission matrix; person/team responsibility; provisioning, review, revocation, and emergency access. | Protected actions and actor interpretation. |

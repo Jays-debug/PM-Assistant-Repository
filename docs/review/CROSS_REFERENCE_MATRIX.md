@@ -23,6 +23,9 @@ Current authority caveat:
 
 - `FLEETOS_ARCHITECTURE.md` describes the high-level architecture as approved.
 - ADR-0001, ADR-0002, ADR-0003, `API_CONTRACT.md`, and `API_ERROR_MODEL.md` remain `Proposed`.
+- ADR-0004 is `Accepted` only for PM Assistant-local Vehicle creation authority,
+  persistence-generated local identity, caller-ID prohibition, and transaction
+  direction. It grants no implementation or enterprise Vehicle Master authority.
 - The Blueprint and later area documents correctly retain proposed and unresolved status.
 - This review does not decide which source status should change.
 
@@ -31,10 +34,10 @@ Current authority caveat:
 | Area | Index or controlling overview | Primary detailed documents | Primary dependencies | Primary consumers |
 | --- | --- | --- | --- | --- |
 | Governance | `AGENTS.md`, `FLEETOS_DEVELOPMENT_GUIDE.md` | Engineering Standard, contribution guide | Product Owner direction | All repository work |
-| Architecture | `docs/FLEETOS_ARCHITECTURE.md` | ADR-0001 through ADR-0003 | Governance | All architecture areas |
+| Architecture | `docs/FLEETOS_ARCHITECTURE.md` | ADR-0001 through ADR-0004 | Governance | All architecture areas |
 | Blueprint | `docs/blueprint/README.md` | FleetOS v1 Blueprint, system context, data flow, runtime, roadmap | Architecture, ownership, identity, API, engineering | Product through operations |
 | Product | `docs/product/README.md` | Specification, roles, FRs, NFRs, workflows, release criteria | Architecture and Blueprint | Domain, application, frontend, backend, validation |
-| Data ownership | `docs/DATA_OWNERSHIP.md` | Source-of-truth matrix, conflict, audit, rollback | Architecture and ADR-0002 | Domain, database, API, application, security, operations |
+| Data ownership | `docs/DATA_OWNERSHIP.md` | Source-of-truth matrix, conflict, audit, rollback | Architecture, ADR-0002, and limited accepted ADR-0004 | Domain, database, API, application, security, operations |
 | Identity | `docs/IDENTITY_CONTRACT.md` | Matching, normalization, classification, audit, migration | Architecture and ownership | Domain, database, API, frontend, backend, security |
 | Domain | `docs/domain/README.md` | Model, entities, aggregates, lifecycle, events, rules | Product, ownership, identity | Database, API, application, frontend, backend |
 | Database | `docs/database/README.md` | Blueprint, schema, tables, indexes, migration | Domain, ownership, identity, API | Backend, infrastructure, operations |
@@ -60,6 +63,8 @@ Current authority caveat:
 | Read integration | Approved read model or versioned API | Architecture, ADR-0003, API, application, frontend | Consistent except malformed ADR-0003 notation |
 | Transitional vehicle key | `vehicle_no` | Ownership, identity, domain, database, API, frontend, backend | Consistent |
 | Canonical vehicle key | `fleetos_vehicle_id` proposed and unimplemented | All data-facing areas | Consistent |
+| PM Assistant-local Vehicle creation | PM Assistant may create only its local maintenance reference; persistence generates `local_vehicle_id`, callers cannot supply it, and successful creation must be auditable | ADR-0004, ownership, identity, domain, database, backend | Accepted architecture direction; implementation blocked |
+| Original Vehicle Number uniqueness | Pending Product Owner decision; current storage constraint is evidence only | ADR-0004, ownership, identity, domain, database, backend | Unresolved |
 | Status domains | Mileage, workflow, completion, notification remain separate | Product, domain, ownership, API, application, frontend, backend, operations | Consistent |
 | Schedule condition | Separate from workflow unless approved otherwise | Domain, API, product, backend | Consistent and unresolved |
 | Legacy sources | Transitional evidence, not workflow authority | Ownership, Blueprint, product, database, application | Consistent |
@@ -69,7 +74,7 @@ Current authority caveat:
 
 | Domain | Current or transitional evidence | Target authority direction | AutoPM permission | Primary unresolved source |
 | --- | --- | --- | --- | --- |
-| Vehicle identity | Sheet data and PM Assistant local vehicle master | Proposed FleetOS registry; enterprise owner unresolved | Read only | `domain:DEC-001`, `api:DEC-001`, `backend:DEC-001` |
+| Vehicle identity | Sheet data and PM Assistant local vehicle master | PM Assistant may create a local maintenance reference under ADR-0004; proposed FleetOS registry and enterprise owner remain unresolved | Read only | `domain:DEC-001`, `domain:DEC-002`, `api:DEC-001`, `backend:DEC-001` |
 | Vehicle attributes | Multiple legacy sources with field-level provenance | Approved registry owner | Read only | Domain and backend identity decisions |
 | Location | PM Assistant local ID/name and plan text | Stable FleetOS identity after ownership approval | Read only | `domain:DEC-003` |
 | Fleet/business grouping | Free-text and source labels | Approved grouping registry | Presentation/filtering only | `domain:DEC-004` |
@@ -88,7 +93,7 @@ Current authority caveat:
 
 | Identity | Current state | Transitional rule | Target state | Readiness |
 | --- | --- | --- | --- | --- |
-| Vehicle | Local IDs, `vehicle_no`, registration, code, row position | Match only by approved normalized `vehicle_no`; quarantine ambiguity | Future `fleetos_vehicle_id` after owner/lifecycle approval | Blocked |
+| Vehicle | Local IDs, `vehicle_no`, registration, code, row position | Persistence may generate a PM Assistant-local ID for approved local creation; caller-supplied IDs prohibited. Matching remains limited to approved transitional rules and ambiguity quarantine. | Future `fleetos_vehicle_id` after owner/lifecycle approval | Local creation architecture partly ready; duplicate and audit design pending; enterprise identity blocked |
 | Location | PM Assistant local integer ID and name; plan text | Exact approved name or alias; preserve history | Future stable FleetOS location identity | Blocked |
 | Fleet/business unit | Labels in multiple sources | Preserve labels and versioned mappings | Stable approved hierarchy and identities | Blocked |
 | Human user/person/team | PM Assistant username/display name and AutoPM labels | No automatic display-name mapping | Approved identity provider and responsibility model | Blocked |
@@ -151,26 +156,26 @@ The requirements and acceptance content is semantically aligned by capability ar
 
 | Area | Identifier count | Prefix groups | Range gaps |
 | --- | ---: | ---: | ---: |
-| ADR | 3 | 1 | 0 |
+| ADR | 4 | 1 | 0 |
 | Product | 243 | 35 | 0 |
-| Domain | 145 | 8 | 0 |
+| Domain | 163 | 8 | 0 |
 | API | 116 | 8 | 0 |
 | Frontend | 181 | 9 | 0 |
 | Backend | 168 | 10 | 0 |
 | Infrastructure | 111 | 10 | 0 |
 | Security | 186 | 11 | 0 |
 | Operations | 111 | 9 | 0 |
-| **Total** | **1,264** | **101** | **0** |
+| **Total** | **1,283** | **101** | **0** |
 
 ### Prefix ranges by area
 
 | Area | Prefix ranges |
 | --- | --- |
-| ADR | `ADR-0001`–`ADR-0003` |
+| ADR | `ADR-0001`–`ADR-0004` |
 | Product functional | `FR-PLT-001`–`008`, `FR-ID-001`–`010`, `FR-PLAN-001`–`008`, `FR-LOC-001`–`006`, `FR-STS-001`–`007`, `FR-MIL-001`–`007`, `FR-CMP-001`–`004`, `FR-HIS-001`–`005`, `FR-NOT-001`–`008`, `FR-SCH-001`–`006`, `FR-IMP-001`–`009`, `FR-DAS-001`–`008`, `FR-API-001`–`010`, `FR-AUD-001`–`005` |
 | Product non-functional | `NFR-SEC-001`–`015`, `NFR-REL-001`–`011`, `NFR-PERF-001`–`008`, `NFR-DQ-001`–`010`, `NFR-USA-001`–`009`, `NFR-ACC-001`–`008`, `NFR-OBS-001`–`006`, `NFR-COM-001`–`006`, `NFR-MNT-001`–`006`, `NFR-VAL-001`–`007` |
 | Product acceptance | `AC-PLAN-001`–`006`, `AC-ID-001`–`005`, `AC-LOC-001`–`004`, `AC-MIL-001`–`005`, `AC-CMP-001`–`005`, `AC-HIS-001`–`005`, `AC-NOT-001`–`005`, `AC-SCH-001`–`004`, `AC-IMP-001`–`006`, `AC-DAS-001`–`006`, `AC-AUD-001`–`005` |
-| Domain | `ENT-001`–`019`, `AGG-001`–`009`, `VO-001`–`019`, `DR-001`–`020`, `INV-001`–`026`, `ST-001`–`016`, `EVT-001`–`020`, `DEC-001`–`016` |
+| Domain | `ENT-001`–`019`, `AGG-001`–`009`, `VO-001`–`020`, `DR-001`–`025`, `INV-001`–`038`, `ST-001`–`016`, `EVT-001`–`020`, `DEC-001`–`016` |
 | API | `RES-001`–`011`, `EP-001`–`014`, `REQ-001`–`012`, `RSP-001`–`014`, `ERR-001`–`019`, `COMP-001`–`012`, `VAL-001`–`016`, `DEC-001`–`018` |
 | Frontend | `APP-001`–`003`, `PAGE-001`–`021`, `FEAT-001`–`040`, `COMPONENT-001`–`025`, `UISTATE-001`–`016`, `UX-001`–`020`, `A11Y-001`–`018`, `VAL-001`–`018`, `DEC-001`–`020` |
 | Backend | `BEMOD-001`–`012`, `APSVC-001`–`014`, `UC-001`–`041`, `REPO-001`–`014`, `TX-001`–`011`, `BVAL-001`–`012`, `BEERR-001`–`014`, `RUNTIME-001`–`014`, `VAL-001`–`018`, `DEC-001`–`018` |
@@ -227,6 +232,7 @@ Confirmed malformed non-link references:
 | Status evidence | Count | Interpretation |
 | --- | ---: | --- |
 | Explicit `Proposed` | 10 | Includes three ADRs, API contracts, and selected Blueprint indexes. |
+| Explicit `Accepted` | 1 | ADR-0004 only, limited to its declared architecture scope. |
 | Explicit Product Owner review/baseline | 4 | Engineering, product, and FleetOS Blueprint sources. |
 | No explicit per-file status in first-level metadata | 88 | Status may be inherited from an index or inferred from purpose wording. |
 

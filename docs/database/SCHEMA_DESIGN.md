@@ -78,9 +78,19 @@ Every target record needs an immutable internal primary key. Its physical type a
 - are not automatically valid public API identifiers;
 - may remain local to PM Assistant unless a later contract approves broader meaning.
 
+ADR-0004 accepts one limited identity-generation direction for future PM
+Assistant-local Vehicle creation: persistence allocates the positive integer
+`local_vehicle_id` inside the application-owned transaction, and callers cannot
+supply or select it. This does not select a physical generator, require
+contiguous values, authorize reuse, or give the key public or cross-system
+meaning.
+
 ### Business and matching keys
 
 - `vehicle_no` is transitional matching data, not a permanent primary key.
+- Exact Original Vehicle Number duplicate and uniqueness policy for PM
+  Assistant-local creation remains pending. The current SQLite uniqueness
+  constraint is evidence only and is not a target logical constraint.
 - Registration and vehicle code are namespaced aliases or attributes, not substitutes for `vehicle_no`.
 - Human-readable location names and user display names are not stable relational identities.
 - Idempotency and replay keys require domain, scope, issuer, uniqueness, and retention rules before implementation.
@@ -141,6 +151,11 @@ Generic source status values remain original evidence until an approved mapping 
 
 ## Historical snapshots and provenance
 
+Successful PM Assistant-local Vehicle creation must be auditable under ADR-0004.
+Audit content, persistence shape, access, retention, and storage implementation
+remain deferred; this requirement does not add a schema field or table in Phase
+6.3.
+
 Historical maintenance records preserve values known when the business event occurred. A later master correction must not rewrite prior plan, completion, campaign, notification, or audit context.
 
 Relevant provenance includes:
@@ -157,6 +172,10 @@ Relevant provenance includes:
 Provenance must exclude credentials, raw authorization material, unnecessary personal data, and unredacted sensitive payloads.
 
 ## Integrity and candidate constraints
+
+No Original Vehicle Number uniqueness constraint is approved by Phase 6.3.
+Physical enforcement and error translation must wait for the Product Owner's
+duplicate-policy decision and compatibility evidence.
 
 Candidate constraints include:
 

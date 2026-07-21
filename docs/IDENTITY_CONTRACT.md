@@ -16,6 +16,10 @@ It does not assert that `fleetos_vehicle_id`, a stable location identifier, prod
 6. Registration, vehicle code and historical vehicle numbers are aliases or attributes until an approved owner and uniqueness policy says otherwise.
 7. Original source values must be retained alongside normalized comparison values.
 8. Ambiguous matches are quarantined, never guessed.
+9. ADR-0004 authorizes PM Assistant-local Vehicle reference creation without
+   establishing enterprise Vehicle Master ownership.
+10. Persistence generates `local_vehicle_id` inside the application-owned
+    creation transaction; a caller cannot supply or select it.
 
 ## Current, transitional and target hierarchy
 
@@ -24,8 +28,21 @@ It does not assert that `fleetos_vehicle_id`, a stable location identifier, prod
 Current:
 
 - AutoPM observes sheet row index, `vehicle_no`, registration and vehicle attributes.
-- PM Assistant observes local `vehicle_master.id`, unique `vehicle_no`, vehicle code, and weekly-control registration.
+- PM Assistant observes local `vehicle_master.id`, currently constrained
+  `vehicle_no`, vehicle code, and weekly-control registration. The observed
+  storage constraint is not an approved Original Vehicle Number uniqueness
+  policy.
 - PM plans and weekly items use textual vehicle references; relational enforcement to the vehicle master is not demonstrated.
+
+ADR-0004 local creation direction:
+
+- persistence allocates a positive `local_vehicle_id` inside the
+  application-owned transaction;
+- the aggregate and caller do not generate or select the value;
+- the value remains immutable and PM Assistant-local, may contain gaps, and has
+  no public or cross-system meaning;
+- exact Original Vehicle Number uniqueness remains a pending Product Owner
+  decision.
 
 Transitional:
 
@@ -142,6 +159,9 @@ Normalization is for comparison only. The original display value remains authori
 
 ## Duplicate and mismatch scenarios
 
+- Exact Original Vehicle Number uniqueness for PM Assistant-local creation is a
+  pending business decision. Exact value equality does not by itself prove that
+  two records represent the same Vehicle.
 - Duplicate sheet rows with the same `vehicle_no`: group for review; do not select the last row automatically.
 - Same `vehicle_no`, different registrations: preserve each record and determine whether it is a registration change, source error or identity collision.
 - Same registration, different `vehicle_no`: treat as a conflict because registrations may change or be reused.
@@ -163,6 +183,10 @@ Normalization is for comparison only. The original display value remains authori
 - Clock time alone must not decide identity merges or completion conflicts.
 
 ## Audit and lineage
+
+Successful PM Assistant-local Vehicle creation must be auditable. Required
+content, actor or process representation, persistence structure, access,
+retention, and storage implementation remain deferred.
 
 An identity decision record must include:
 
@@ -203,10 +227,12 @@ Secrets, credentials and raw authentication material must never appear in identi
 - Enterprise Vehicle Master owner.
 - `fleetos_vehicle_id` type, generator, storage, API representation, merge/split and retirement rules.
 - Whether and when `vehicle_no` may change or be reused.
+- Whether exact Original Vehicle Number values must be unique among PM
+  Assistant-local Vehicle references and how an approved duplicate is reported.
+- Minimum local Vehicle-creation audit content and persistence design.
 - Thai/Arabic digit conversion and punctuation normalization.
 - Registration uniqueness, province handling and reuse policy.
 - Stable location identity and location-master ownership.
 - Fleet/business-unit master identities and hierarchy.
 - User/person/team identity provider and responsibility mapping.
 - Stable external plan/event/import identifiers and idempotency rules.
-

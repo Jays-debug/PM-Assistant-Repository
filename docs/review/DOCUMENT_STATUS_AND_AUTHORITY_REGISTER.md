@@ -5,7 +5,7 @@
 This register makes document status and authority discoverable without changing the acceptance state of any architecture decision, contract, requirement, or implementation gate.
 
 - Status: Repository metadata register
-- Review date: 2026-07-18
+- Review date: 2026-07-21
 - Implementation authorization: None
 
 ## Status meanings
@@ -45,7 +45,7 @@ Every file named below inherits the status and interpretation rules of its direc
 
 | Area | Files covered | Status and authority |
 | --- | --- | --- |
-| ADR | `README.md`; `0001-preserve-module-boundaries.md`; `0002-authoritative-data-ownership.md`; `0003-versioned-api-boundary.md` | Index only; all three ADRs remain declared `Proposed`. |
+| ADR | `README.md`; `0001-preserve-module-boundaries.md`; `0002-authoritative-data-ownership.md`; `0003-versioned-api-boundary.md`; `0004-pm-assistant-local-vehicle-write-authority.md` | Index only; ADR-0001 through ADR-0003 remain `Proposed`. ADR-0004 is `Accepted` for its limited PM Assistant-local Vehicle creation scope. |
 | Engineering | `README.md`; `AI_COLLABORATION_STANDARD.md`; `API_AND_DATA_STANDARD.md`; `CODING_STANDARD.md`; `DEVELOPMENT_LIFECYCLE.md`; `GIT_AND_BRANCH_STANDARD.md`; `REVIEW_RELEASE_CHECKLISTS.md`; `SECURITY_AND_OBSERVABILITY_STANDARD.md`; `TESTING_AND_QUALITY_STANDARD.md` | Product Owner review baseline. It does not replace architecture or task approval. |
 | Blueprint | `README.md`; `FLEETOS_V1_BLUEPRINT.md`; `SYSTEM_CONTEXT_AND_MODULE_MAP.md`; `DATA_AND_INTEGRATION_FLOW.md`; `DEPLOYMENT_AND_RUNTIME_BLUEPRINT.md`; `IMPLEMENTATION_ROADMAP.md` | Documentation baseline. Proposed dependencies remain proposed; target material is not operational. |
 | Product | `README.md`; `FLEETOS_PRODUCT_SPECIFICATION.md`; `USER_ROLES_AND_PERSONAS.md`; `FUNCTIONAL_REQUIREMENTS.md`; `NON_FUNCTIONAL_REQUIREMENTS.md`; `USER_WORKFLOWS_AND_ACCEPTANCE.md`; `V1_SCOPE_AND_RELEASE_CRITERIA.md`; `REQUIREMENTS_TRACEABILITY_MATRIX.md` | Product specification baseline for Product Owner review. Conditional requirements and decision gates remain conditional. |
@@ -65,6 +65,7 @@ Every file named below inherits the status and interpretation rules of its direc
 | Governing source | Acceptance state |
 | --- | --- |
 | ADR-0001, ADR-0002, ADR-0003 | Proposed |
+| ADR-0004 | Accepted architecture direction; no implementation authorization |
 | FleetOS API Contract | Proposed |
 | FleetOS API Error Model | Proposed |
 | API Blueprint | Proposed |
