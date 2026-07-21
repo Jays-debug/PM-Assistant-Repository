@@ -30,7 +30,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 app = FastAPI(title="PM Vehicle Tracking System")
-app.include_router(vehicle_read_router)
 
 LOG_DIR = Path(__file__).resolve().parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -1602,6 +1601,8 @@ def sync_vehicle_master(db: Session = Depends(get_db)):
     add_import_log(db, "vehicles", "Data Car.csv", "imported", imported=count)
     db.commit()
     return {"success": True, "imported_or_updated": count}
+
+app.include_router(vehicle_read_router)
 
 @app.get("/api/plans/{plan_id}/history", response_model=List[PMHistorySchema])
 def get_plan_history(plan_id: int, db: Session = Depends(get_db)):
