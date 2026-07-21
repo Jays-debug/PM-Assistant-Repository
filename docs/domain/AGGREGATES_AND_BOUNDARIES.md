@@ -30,6 +30,25 @@ It may represent an existing PM Assistant-local Vehicle, expose those two values
 
 This subset excludes `VO-001`, `ENT-002`, `ENT-004`, `ENT-019`, normalization, matching, aliases, grouping, reconciliation, lifecycle operations, events, repositories, persistence, APIs, and application services. The full `AGG-001` blocking decisions remain unresolved. The current implementation may obtain `local_vehicle_id` from the existing local Vehicle record identifier, but the aggregate contract is storage-agnostic.
 
+#### Phase 6.3 local creation authority
+
+ADR-0004 authorizes PM Assistant to create a local Vehicle reference in a later,
+separately approved implementation phase. Persistence allocates the positive
+`local_vehicle_id` inside the application-owned transaction; neither the caller
+nor the aggregate supplies or generates it. An allocated identifier is not a
+successful result until commit is confirmed and has no sequence, public, or
+cross-system meaning.
+
+The created aggregate has the same immutable two-field state and equality rules
+as the Phase 5.3 subset. Successful creation must be auditable, while audit
+content and implementation remain deferred. Exact Original Vehicle Number
+duplicate and uniqueness behavior remains pending and is not an aggregate
+invariant.
+
+This authority does not add mutation of an existing Vehicle, deletion,
+retirement, merge, split, normalization, matching, aliases, grouping,
+reconciliation, events, APIs, or AutoPM behavior.
+
 ### `AGG-002` — Location Directory
 
 - Root: `ENT-005` Location.
@@ -198,4 +217,8 @@ Approved read models may combine projections from several aggregates for AutoPM 
 - Whether history and audit use the same or separate stores.
 - Runtime packaging of scheduler, notification, and import responsibilities.
 - Database, migration, queue, lock, hosting, and recovery technology.
+- Exact Original Vehicle Number duplicate and uniqueness policy for local
+  creation.
+- Local Vehicle-creation audit content, persistence shape, access, and retention.
+- Update, correction, deletion, retirement, merge, and split behavior.
 

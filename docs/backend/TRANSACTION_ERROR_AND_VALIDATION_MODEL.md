@@ -85,6 +85,22 @@ sequenceDiagram
 
 ## Required consistency examples
 
+### PM Assistant-local Vehicle creation
+
+ADR-0004 authorizes architecture planning for one local Vehicle creation command.
+The application service owns one explicit unit of work. Persistence allocates
+`local_vehicle_id` while staging the record; callers cannot supply it, and an
+allocated value is not a successful result until commit is confirmed.
+
+Successful creation must be auditable. Phase 6.3 does not prescribe audit fields,
+persistence shape, source references, access, retention, or storage. A later
+approved contract must define the required consistency between the created
+record and its audit evidence before implementation reports success.
+
+Exact Original Vehicle Number duplicate and uniqueness behavior remains pending.
+A storage uniqueness exception therefore has no approved duplicate-conflict
+translation merely because the current constraint exists.
+
 ### Plan or workflow command
 
 The authoritative plan/workflow state and required history/audit evidence must not diverge after a reported success. Exact physical storage may differ, but `TX-003` applies.
@@ -146,6 +162,14 @@ The backend must preserve at least these fixed invariants:
 - Import preview does not mutate authoritative state.
 - Corrections preserve original and superseded evidence.
 - Required audit/history cannot be silently omitted after reported success.
+- PM Assistant-local Vehicle creation does not establish enterprise Vehicle
+  Master ownership.
+- A creation caller cannot supply `local_vehicle_id`; persistence generates it
+  inside the application-owned transaction.
+- Original Vehicle Number uniqueness is not an invariant until explicitly
+  approved.
+- Local creation authority does not authorize Vehicle update, deletion,
+  lifecycle, API, or AutoPM writes.
 
 Exact transition graphs, evidence, authorization, thresholds, and retention remain backend `DEC-*` decisions and governing domain decisions.
 
@@ -267,6 +291,14 @@ Domain audit and operational logging remain separate where purpose, access, immu
 - Import rollback preserves batch, row, raw-source, and decision evidence.
 - Mapping or calculation rollback changes the active version without rewriting original source or accepted mileage.
 - Rollback never transfers maintenance authority to AutoPM or a legacy source.
+- A rolled-back local Vehicle creation is not reported as success even if
+  persistence allocated a local identifier; identifier gaps have no domain
+  meaning.
+- A local Vehicle creation with uncertain commit outcome is reconciled before
+  any retry. It is never retried automatically when a repeated attempt could
+  create another accepted record.
+- Caller input, correlation, timestamp, Original Vehicle Number, and allocated
+  local identity do not become idempotency keys without separate approval.
 
 ## Validation and error testing direction
 

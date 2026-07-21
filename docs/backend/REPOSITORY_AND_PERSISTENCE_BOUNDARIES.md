@@ -42,7 +42,7 @@ This is current implementation evidence only. Current table names, ORM classes, 
 | `REPO-002` | Task-State Repository | Load and persist current pause, resume, follow-up, snooze, reminder, and related task-control state. |
 | `REPO-003` | Completion Repository | Append and query explicit completion, reopen, correction, and re-completion evidence. |
 | `REPO-004` | PM History Repository | Append ordered maintenance-history entries and produce safe history source records. |
-| `REPO-005` | Vehicle Reference Repository | Lookup transitional vehicle representations, aliases, provenance, and candidate matches without fabricating enterprise identity. |
+| `REPO-005` | Vehicle Reference Repository | Lookup transitional vehicle representations, aliases, provenance, and candidate matches without fabricating enterprise identity. Under ADR-0004, a later separately approved narrow write port may stage creation of one PM Assistant-local Vehicle reference without gaining update, delete, lifecycle, or enterprise-registry authority. |
 | `REPO-006` | Location Repository | Load and persist transitional location records, names, aliases, lifecycle evidence, and historical-reference support. |
 | `REPO-007` | Mileage Repository | Conditionally store received/accepted mileage evidence and versioned mileage assessments without rewriting raw accepted input. |
 | `REPO-008` | Import Batch Repository | Store import batches, source references, preview/confirmation state, counts, replay disposition, and row outcomes. |
@@ -67,6 +67,27 @@ Repositories align with domain consistency direction, not necessarily one table 
 - `REPO-013` and `REPO-014` are read-oriented and do not become AutoPM database contracts.
 
 An implementation may combine interfaces in one adapter or persistence module where maintainable. It must preserve the logical boundaries and test behavior.
+
+### Phase 6.3 local Vehicle creation direction
+
+ADR-0004 establishes architecture direction for a later narrow local Vehicle
+creation port. That port, if separately approved for implementation:
+
+- is owned by the application side and remains specific to local Vehicle
+  creation;
+- accepts no caller-supplied `local_vehicle_id`;
+- permits persistence to allocate the positive local identifier inside the
+  application-owned unit of work;
+- stages creation without committing or rolling back independently;
+- returns no successful application result before the unit of work confirms
+  commit;
+- participates in the required auditability of successful creation without this
+  document choosing audit content or storage;
+- implements no update, delete, matching, normalization, alias, grouping,
+  reconciliation, event, API, or AutoPM behavior.
+
+Exact Original Vehicle Number duplicate and uniqueness semantics remain pending.
+The port and adapter must not infer them from a current database constraint.
 
 ## Repository and persistence adapter flow
 
@@ -180,6 +201,11 @@ Query models:
 
 This mapping does not authorize schema changes.
 
+The current `VehicleMaster` primary-key and uniqueness behavior remains
+implementation evidence. ADR-0004 accepts persistence ownership of local integer
+identity allocation, but it does not accept the current Original Vehicle Number
+constraint as business policy or select an audit persistence design.
+
 ## Transaction boundaries by use-case family
 
 | Use-case family | Transaction direction |
@@ -193,6 +219,7 @@ This mapping does not authorize schema changes.
 | Notification | Intent persistence and provider attempt are separate; provider calls occur outside a database transaction under `TX-004`. |
 | Scheduler | Occurrence acquisition and execution result are durable steps; the invoked business use case owns its own transaction. |
 | Query/read models | Read-only; no hidden authoritative mutation. |
+| PM Assistant-local Vehicle creation | One application-owned transaction stages the local reference and satisfies the later approved audit consistency contract. Persistence allocates `local_vehicle_id`; caller-supplied IDs are prohibited. Duplicate policy remains pending. |
 
 ## Concurrency direction
 
@@ -209,6 +236,10 @@ Target direction:
 - a transaction retry is allowed only when the application can prove it cannot duplicate business outcomes.
 
 Exact version fields, lock behavior, isolation level, retry policy, and user resolution experience remain `DEC-014`.
+
+For local Vehicle creation, an allocated identifier is not proof of commit.
+Automatic retry is prohibited when a repeated attempt could create another
+accepted record, and an uncertain outcome requires reconciliation before retry.
 
 ## Idempotency direction
 
@@ -236,6 +267,10 @@ Adapters classify failures without leaking implementation:
 | Essential connection unavailable | `BEERR-008` |
 | Persistence deadline exceeded | `BEERR-009` |
 | Constraint or commit failure not safely classified | `BEERR-010` |
+
+Until Original Vehicle Number duplicate policy is approved, an adapter cannot
+classify the current storage uniqueness constraint as `BEERR-007` merely because
+the constraint exists. It must not invent domain duplicate semantics.
 
 Public API translation remains governed by the API Blueprint and `TRANSACTION_ERROR_AND_VALIDATION_MODEL.md`.
 

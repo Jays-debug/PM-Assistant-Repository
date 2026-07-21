@@ -158,6 +158,11 @@ Not accepted. It is approved only as a transitional match key; enterprise unique
 - API authentication/authorization, versioning and idempotency.
 - Audit retention, import atomicity and reconciliation acceptance thresholds.
 
+ADR-0004 separately accepts PM Assistant authority to create a local Vehicle
+reference and persistence ownership of its local identifier generation. That
+limited decision does not accept this ADR as a whole, resolve enterprise Vehicle
+Master ownership, or settle Original Vehicle Number uniqueness.
+
 ## Result
 
 If accepted, all later FleetOS work must preserve these ownership and synchronization boundaries unless a superseding ADR is approved.

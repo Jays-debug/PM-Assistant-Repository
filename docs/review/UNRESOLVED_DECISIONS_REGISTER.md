@@ -48,6 +48,29 @@ The Product Owner approved one PM Assistant-internal, read-only application quer
 
 The inward port is named `ExistingVehicleReadPort`: `Existing` excludes creation and lifecycle authority, and `ReadPort` makes its read-only application-boundary role explicit. This approval adds no list operation, Vehicle Number lookup, normalization, matching, aliases, grouping, reconciliation, command, mutation, event, repository implementation, persistence adapter, ORM mapping, API, presentation behavior, AutoPM behavior, or dependency. It does not resolve `domain:DEC-001`, `domain:DEC-002`, `domain:DEC-004`, or any API or backend Vehicle-identity decision. The unresolved-decision counts above are unchanged.
 
+### Phase 6.3 — PM Assistant-local Vehicle creation authority
+
+The Product Owner accepted ADR-0004. PM Assistant may create a Vehicle reference
+for its own local maintenance use without becoming the owner of an enterprise
+Vehicle Master. Persistence generates `local_vehicle_id` inside the
+application-owned transaction, and callers cannot supply or select it.
+
+Successful local Vehicle creation must be auditable, but audit content,
+persistence shape, access, retention, and implementation remain deferred.
+Application-owned commit, rollback, no-blind-retry, and uncertain-outcome
+direction is accepted for the local creation scope.
+
+Exact Original Vehicle Number duplicate and uniqueness policy remains pending.
+The current database constraint is not elevated to an architectural invariant.
+Update, delete, lifecycle, API, authentication, authorization, migration, AutoPM,
+normalization, matching, alias, grouping, reconciliation, and event authority
+remain excluded.
+
+This is a limited disposition of parts of `domain:DEC-001`, `domain:DEC-014`,
+`domain:DEC-015`, `backend:DEC-001`, and `backend:DEC-014`. The broader decisions,
+including duplicate policy under `domain:DEC-002` and audit design under
+`backend:DEC-012`, remain unresolved. The counts above are unchanged.
+
 ## Consolidated decision themes
 
 The following table groups related source decisions for review only. A theme does not replace or collapse its source decisions.
@@ -63,7 +86,7 @@ The following table groups related source decisions for review only. A theme doe
 | Scheduler | `domain:DEC-012`, `backend:DEC-010`, `IDEC-006` | Blocks safe hosted or multi-process execution. |
 | Import and synchronization | `domain:DEC-013`, `api:DEC-007`, `backend:DEC-008` | Blocks replay-safe controlled ingestion. |
 | Audit, privacy, retention | `domain:DEC-014`, `api:DEC-012`, `013`, `backend:DEC-012`, `SDEC-016`, `017`, `021`, `ODEC-006` | Blocks safe history, audit, logs, and data lifecycle. |
-| Commands, concurrency, idempotency | `domain:DEC-015`, `backend:DEC-014`, `SDEC-014` | Blocks future write contracts and duplicate-sensitive commands. |
+| Commands, concurrency, idempotency | `domain:DEC-015`, `backend:DEC-014`, `SDEC-014` | ADR-0004 resolves transaction ownership and no-blind-retry direction only for planned local Vehicle creation; broader write contracts and duplicate-sensitive commands remain blocked. |
 | KPI and reporting | `domain:DEC-016`, `api:DEC-006`, `frontend:DEC-008`, `backend:DEC-011` | Blocks authoritative dashboard comparisons and acceptance. |
 | API operations and compatibility | `api:DEC-010`–`018` | Blocks production contract behavior, readiness, cutover, and retirement. |
 | Frontend experience and rollout | `frontend:DEC-001`–`020` | Blocks final shell, navigation, UX, accessibility, performance, and cutover. |
@@ -77,8 +100,8 @@ Source: `docs/domain/DOMAIN_RULES_AND_INVARIANTS.md`
 
 | Qualified ID | Existing unresolved subject | Affected implementation |
 | --- | --- | --- |
-| `domain:DEC-001` | Enterprise Vehicle Master owner and `fleetos_vehicle_id` type, generation, uniqueness, storage, API representation, merge, split, retirement, and creation authority; Phases 5.2 and 5.3 leave these subjects unresolved while Phase 5.3 permits only PM Assistant-local `local_vehicle_id` | Canonical vehicle identity; does not block raw-value-only `VO-020` or the limited minimal Vehicle Aggregate |
-| `domain:DEC-002` | `vehicle_no` change/reuse, normalization corpus, digit/punctuation handling, registration uniqueness/reuse, and alias approval; all remain unresolved after Phases 5.2 and 5.3 | Transitional reconciliation; excluded from the limited minimal Vehicle Aggregate |
+| `domain:DEC-001` | Enterprise Vehicle Master owner and `fleetos_vehicle_id` type, generation, uniqueness, storage, API representation, merge, split, retirement, and enterprise creation authority. ADR-0004 resolves only PM Assistant-local reference creation and persistence generation of `local_vehicle_id`. | Canonical vehicle identity; does not block the accepted local creation authority |
+| `domain:DEC-002` | Exact Original Vehicle Number duplicate/uniqueness policy for local creation; `vehicle_no` change/reuse, normalization corpus, digit/punctuation handling, registration uniqueness/reuse, and alias approval | Blocks a complete local create contract and transitional reconciliation; excluded from the aggregate invariant set |
 | `domain:DEC-003` | Location owner, stable identity, create/rename/merge/alias/retire/delete, and historical-name policy | Location lifecycle |
 | `domain:DEC-004` | Fleet, business-unit, transport-type, PM-group semantics, ownership, hierarchy, mapping, identity, and effective dating | Grouping and KPI filters |
 | `domain:DEC-005` | Identity provider, human/service identity, roles, permissions, responsibility, provisioning, review, revocation, and emergency access | Protected actions and actor meaning |
@@ -152,7 +175,7 @@ Source: `docs/backend/BACKEND_VALIDATION_AND_ROLLOUT.md`
 
 | Qualified ID | Existing unresolved subject | Affected implementation |
 | --- | --- | --- |
-| `backend:DEC-001` | Enterprise Vehicle Master and `fleetos_vehicle_id` lifecycle | Canonical identity |
+| `backend:DEC-001` | Enterprise Vehicle Master and `fleetos_vehicle_id` lifecycle; ADR-0004 resolves only PM Assistant-local reference creation and local ID generation | Canonical identity |
 | `backend:DEC-002` | `vehicle_no` normalization, ambiguity, aliases, digit handling, and reuse/change | Lookup/reconciliation |
 | `backend:DEC-003` | Location, organization, person/team/responsibility identity and history | Commands, projections, filters |
 | `backend:DEC-004` | Odometer producer, priority, units, timing, reset, correction, duplicates, monotonicity, timezone, and freshness | Mileage use cases |
@@ -163,9 +186,9 @@ Source: `docs/backend/BACKEND_VALIDATION_AND_ROLLOUT.md`
 | `backend:DEC-009` | Notification recipients, intent identity, idempotency, templates, provider classes, timeout, retry, redaction, and retention | Notification use cases |
 | `backend:DEC-010` | Scheduler topology, job/occurrence identity, timezone, overlap, misfire, lock/lease, retry, recovery, and shutdown | Scheduler runtime |
 | `backend:DEC-011` | KPI/report definitions, populations, filters, grouping, historical behavior, versions, and exports | Reporting |
-| `backend:DEC-012` | Audit/history/import/notification/log/error/diagnostic access, privacy, correction, deletion, and retention | Evidence and storage |
+| `backend:DEC-012` | Audit/history/import/notification/log/error/diagnostic content, persistence, access, privacy, correction, deletion, and retention; Phase 6.3 requires local creation to be auditable without resolving these details | Evidence and storage |
 | `backend:DEC-013` | Plan/location deletion, cancellation versus tombstone, references, history continuity, archive, and privacy | Resource lifecycle |
-| `backend:DEC-014` | Command concurrency, expected version, isolation, idempotency, uncertain outcomes, and safe retry | Transactions |
+| `backend:DEC-014` | Command concurrency, expected version, isolation, idempotency, uncertain outcomes, and safe retry. ADR-0004 resolves application transaction ownership, no blind retry, and reconciliation of uncertain outcomes only for planned local Vehicle creation. | Transactions |
 | `backend:DEC-015` | Authentication/proxy topology, identities, roles/scopes, authorization, CORS, TLS, correlation, disclosure, and write/UI errors | Protected boundaries |
 | `backend:DEC-016` | Hosting/process topology, datastore/migration, composition, readiness, shutdown, backup, restore, and recovery objectives | Runtime |
 | `backend:DEC-017` | Availability, latency, throughput, load, file limits, timeout, alerts, freshness, recovery, stabilization, and retention targets | Performance/operations |

@@ -59,6 +59,19 @@ The current implementation is backed by the existing local identifier recorded a
 
 This limited aggregate has no mutation, matching, normalization, alias, grouping, reconciliation, lifecycle, event, repository, or persistence behavior. It is an intentionally implemented subset of conceptual `AGG-001`, not the complete Vehicle Identity aggregate.
 
+ADR-0004 authorizes PM Assistant to create a Vehicle reference for its own local
+maintenance use in a later separately approved implementation phase. Persistence
+generates `local_vehicle_id` inside the application-owned transaction; callers
+cannot supply it, and the aggregate remains unaware of generation and commit
+mechanisms. This authority does not establish an enterprise Vehicle Master.
+
+Successful local Vehicle creation must be auditable, but audit content and
+implementation remain deferred. Exact Original Vehicle Number duplicate and
+uniqueness behavior also remains a pending Product Owner decision. Creation
+authority therefore adds no uniqueness invariant, update behavior, deletion,
+lifecycle, matching, normalization, alias, grouping, reconciliation, event, API,
+or AutoPM behavior.
+
 ## Status vocabulary
 
 The following domains are independent:
