@@ -24,11 +24,13 @@ from pydantic import BaseModel, Field
 import database
 from database import get_db, PMPlan, Location, Setting, init_db, VehicleMaster, PMHistory, NotificationLog, ImportLog, UserMaster, LineTarget, LineWebhookEvent, PMTaskState, WeeklyCampaign, WeeklyCampaignItem, import_data_car_to_vehicle_master
 from notifier import trigger_daily_notification, send_line_message, get_alert_summary_text, send_line_message_debug
+from app.presentation.vehicle_read import router as vehicle_read_router
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 app = FastAPI(title="PM Vehicle Tracking System")
+app.include_router(vehicle_read_router)
 
 LOG_DIR = Path(__file__).resolve().parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
